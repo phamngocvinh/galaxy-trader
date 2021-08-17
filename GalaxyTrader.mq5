@@ -18,7 +18,8 @@ double         Senkou_Span_B_Buffer[];
 double         Chinkou_Span_Buffer[];
 //---- handles for indicators
 int      Ichimoku_handle;            // handle of the indicator iIchimoku
-int values_to_copy = 1;
+int values_to_copy = 30;
+bool isSendNoti = true;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -40,6 +41,24 @@ void OnDeinit(const int reason) {
 //+------------------------------------------------------------------+
 void OnTick() {
 //---
+   if (isSendNoti) {
+      SendNotification("Test noti");
+      isSendNoti = false;
+   }
+   
+// Get previous 26 close price
+   double prev_26_close;
+   CopyClose(NULL, _Period, 0, 26, prev_26_close);
+   
+// Get ichimoku
+   FillArraysFromBuffers(Tenkan_sen_Buffer, Kijun_sen_Buffer, Senkou_Span_A_Buffer, Senkou_Span_B_Buffer, Chinkou_Span_Buffer,
+                         kijun_sen, Ichimoku_handle, values_to_copy);
+// If Tenkan-sen above Cloud + 0.20
+   if (Tenkan_sen_Buffer[0] > Senkou_Span_B_Buffer[0]
+         && Tenkan_sen_Buffer[0] > Kijun_sen_Buffer[0]
+         && Chinkou_Span_Buffer[0] > prev_26_close
+         && Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]) {
+   }
 }
 //+------------------------------------------------------------------+
 
