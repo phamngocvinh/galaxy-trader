@@ -21,7 +21,7 @@ double Senkou_Span_B_Buffer[];
 double Chinkou_Span_Buffer[];
 //---- handles for indicators
 int Ichimoku_handle; // handle of the indicator iIchimoku
-int values_to_copy = 30;
+int values_to_copy = 27;
 CTrade trade;
 
 //+------------------------------------------------------------------+
@@ -31,7 +31,7 @@ int OnInit() {
 // Get ichimoku
    Ichimoku_handle = iIchimoku(NULL, 0, 9, 26, 52);
 // create a timer with a 5 minutes period
-   EventSetTimer(60);
+   EventSetTimer(5);
    Print("Welcome to the Galaxy!");
    return(INIT_SUCCEEDED);
 }
@@ -52,23 +52,7 @@ void OnTick() {
 //+------------------------------------------------------------------+
 void OnTimer() {
    Print("Finding...");
-   if (PositionsTotal() <= 3) {
-      // Info of the last tick.
-//-----------------------
-
-// To be used for getting recent/latest price quotes
-      MqlTick Latest_Price; // Structure to get the latest prices
-      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-
-// The BID price.
-      static double dBid_Price;
-
-// The ASK price.
-      static double dAsk_Price;
-
-      dBid_Price = Latest_Price.bid;  // Current Bid price.
-      dAsk_Price = Latest_Price.ask;  // Current Ask price.
-
+   if (PositionsTotal() < 1) {
       FindBlackHole();
       FindGalaxy();
    }
@@ -88,13 +72,13 @@ void FindBlackHole() {
 // Tenkan-sen above Kijun-sen
 // Chinkou-sen above Price
 // Uptrend cloud
-   if(Tenkan_sen_Buffer[0] < Senkou_Span_B_Buffer[0]
-         && Tenkan_sen_Buffer[0] < Kijun_sen_Buffer[0]
-         && Tenkan_sen_Buffer[0] <= Tenkan_sen_Buffer[3]
-         && Tenkan_sen_Buffer[3] <= Tenkan_sen_Buffer[6]
+   if(Tenkan_sen_Buffer[8] < Senkou_Span_B_Buffer[8]
          && Tenkan_sen_Buffer[8] < Kijun_sen_Buffer[8]
-         && Chinkou_Span_Buffer[0] < prev_26_close[25]
-         && Senkou_Span_A_Buffer[0] < Senkou_Span_B_Buffer[0]) {
+         && Tenkan_sen_Buffer[8] <= Tenkan_sen_Buffer[5]
+         && Tenkan_sen_Buffer[5] <= Tenkan_sen_Buffer[2]
+         && Tenkan_sen_Buffer[0] <= Kijun_sen_Buffer[0]
+         && Chinkou_Span_Buffer[8] <= prev_26_close[25]
+         && Senkou_Span_A_Buffer[8] < Senkou_Span_B_Buffer[8]) {
       // Send notification
       string message = "Found Black Hole !!!";
       SendNotification(message);
@@ -103,7 +87,7 @@ void FindBlackHole() {
       // Buy
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-      trade.Sell(0.02, NULL, 0.0, 0.0, Latest_Price.bid - 1.07, "Galaxy Sell");
+      //trade.Sell(0.02, NULL, 0.0, 0.0, Latest_Price.bid - 0.57, "Galaxy Sell");
    }
 }
 
@@ -112,22 +96,19 @@ void FindBlackHole() {
 //+------------------------------------------------------------------+
 void FindGalaxy() {
 // Get previous 26 close price
-   double prev_26_close[26];
-   CopyClose(_Symbol, _Period, 0, 26, prev_26_close);
+   double prev_26_close[27];
+   CopyClose(_Symbol, _Period, 0, 27, prev_26_close);
 // Get ichimoku
    FillArraysFromBuffers(Tenkan_sen_Buffer, Kijun_sen_Buffer, Senkou_Span_A_Buffer, Senkou_Span_B_Buffer, Chinkou_Span_Buffer,
                          kijun_sen, Ichimoku_handle, values_to_copy);
-// Tenkan-sen above Cloud
-// Tenkan-sen above Kijun-sen
-// Chinkou-sen above Price
-// Uptrend cloud
-   if(Tenkan_sen_Buffer[0] > Senkou_Span_A_Buffer[0]
-         && Tenkan_sen_Buffer[0] > Kijun_sen_Buffer[0]
-         && Tenkan_sen_Buffer[0] >= Tenkan_sen_Buffer[3]
-         && Tenkan_sen_Buffer[3] >= Tenkan_sen_Buffer[6]
-         && Tenkan_sen_Buffer[8] > Kijun_sen_Buffer[8]
-         && Chinkou_Span_Buffer[0] > prev_26_close[25]
-         && Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]) {
+
+   if(Tenkan_sen_Buffer[26] > Senkou_Span_B_Buffer[0] // Tenkan-sen above Cloud
+         && Tenkan_sen_Buffer[26] > Kijun_sen_Buffer[26] // Tenkan-sen above Kijun-sen
+         && Tenkan_sen_Buffer[26] >= Tenkan_sen_Buffer[23]
+         && Tenkan_sen_Buffer[23] >= Tenkan_sen_Buffer[20]
+         && Tenkan_sen_Buffer[26] >= Kijun_sen_Buffer[26]
+         && Chinkou_Span_Buffer[0] >= prev_26_close[0] // Chinkou-sen above Price
+         && Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]) { // Uptrend cloud
       // Send notification
       string message = "Found Galaxy !!!";
       SendNotification(message);
@@ -136,7 +117,7 @@ void FindGalaxy() {
       // Buy
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-      trade.Buy(0.02, NULL, 0.0, 0.0, Latest_Price.ask + 1.07, "Galaxy Buy");
+      trade.Buy(0.02, NULL, 0.0, 0.0, Latest_Price.ask + 0.57, "Galaxy Buy");
    }
 }
 
