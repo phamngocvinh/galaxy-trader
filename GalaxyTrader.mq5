@@ -8,61 +8,99 @@
 #property version   "1.00"
 
 //--- indicator buffer
-input int                  tenkan_sen = 9;            // period of Tenkan-sen
-input int                  kijun_sen = 26;            // period of Kijun-sen
-input int                  senkou_span_b = 52;        // period of Senkou Span B
-double         Tenkan_sen_Buffer[];
-double         Kijun_sen_Buffer[];
-double         Senkou_Span_A_Buffer[];
-double         Senkou_Span_B_Buffer[];
-double         Chinkou_Span_Buffer[];
+input int tenkan_sen = 9; // period of Tenkan-sen
+input int kijun_sen = 26; // period of Kijun-sen
+input int senkou_span_b = 52; // period of Senkou Span B
+double Tenkan_sen_Buffer[];
+double Kijun_sen_Buffer[];
+double Senkou_Span_A_Buffer[];
+double Senkou_Span_B_Buffer[];
+double Chinkou_Span_Buffer[];
 //---- handles for indicators
-int      Ichimoku_handle;            // handle of the indicator iIchimoku
+int Ichimoku_handle; // handle of the indicator iIchimoku
 int values_to_copy = 30;
-bool isSendNoti = true;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit() {
-//---
+// Get ichimoku
    Ichimoku_handle = iIchimoku(NULL, 0, 9, 26, 52);
-//---
+// create a timer with a 5 minutes period
+   EventSetTimer(60);
    return(INIT_SUCCEEDED);
 }
 //+------------------------------------------------------------------+
 //| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason) {
-//---
+// Destroy the timer after completing the work
+   EventKillTimer();
 }
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick() {
-//---
-   if (isSendNoti) {
-      SendNotification("Test noti");
-      isSendNoti = false;
-   }
-   
+}
+//+------------------------------------------------------------------+
+//| Timer function                                                   |
+//+------------------------------------------------------------------+
+void OnTimer() {
+   Print("Finding...");
+   FindBlackHole();
+   FindGalaxy();
+}
+
+//+------------------------------------------------------------------+
+//| Find Downtrend                                                                 |
+//+------------------------------------------------------------------+
+void FindBlackHole() {
 // Get previous 26 close price
-   double prev_26_close;
-   CopyClose(NULL, _Period, 0, 26, prev_26_close);
-   
+   double prev_26_close[26];
+   CopyClose(_Symbol, _Period, 0, 26, prev_26_close);
 // Get ichimoku
    FillArraysFromBuffers(Tenkan_sen_Buffer, Kijun_sen_Buffer, Senkou_Span_A_Buffer, Senkou_Span_B_Buffer, Chinkou_Span_Buffer,
                          kijun_sen, Ichimoku_handle, values_to_copy);
-// If Tenkan-sen above Cloud + 0.20
-   if (Tenkan_sen_Buffer[0] > Senkou_Span_B_Buffer[0]
-         && Tenkan_sen_Buffer[0] > Kijun_sen_Buffer[0]
-         && Chinkou_Span_Buffer[0] > prev_26_close
-         && Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]) {
+// Tenkan-sen above Cloud
+// Tenkan-sen above Kijun-sen
+// Chinkou-sen above Price
+// Uptrend cloud
+   if(Tenkan_sen_Buffer[0] < Senkou_Span_B_Buffer[0]
+         && Tenkan_sen_Buffer[0] < Kijun_sen_Buffer[0]
+         && Chinkou_Span_Buffer[0] < prev_26_close[25]
+         && Senkou_Span_A_Buffer[0] < Senkou_Span_B_Buffer[0]) {
+      // Send notification
+      string message = "Found Black Hole !!!";
+      SendNotification(message);
+      Print(message);
    }
 }
-//+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
+//| Find Uptrend                                                                 |
+//+------------------------------------------------------------------+
+void FindGalaxy() {
+// Get previous 26 close price
+   double prev_26_close[26];
+   CopyClose(_Symbol, _Period, 0, 26, prev_26_close);
+// Get ichimoku
+   FillArraysFromBuffers(Tenkan_sen_Buffer, Kijun_sen_Buffer, Senkou_Span_A_Buffer, Senkou_Span_B_Buffer, Chinkou_Span_Buffer,
+                         kijun_sen, Ichimoku_handle, values_to_copy);
+// Tenkan-sen above Cloud
+// Tenkan-sen above Kijun-sen
+// Chinkou-sen above Price
+// Uptrend cloud
+   if(Tenkan_sen_Buffer[0] > Senkou_Span_A_Buffer[0]
+         && Tenkan_sen_Buffer[0] > Kijun_sen_Buffer[0]
+         && Chinkou_Span_Buffer[0] > prev_26_close[25]
+         && Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]) {
+      // Send notification
+      string message = "Found Galaxy !!!";
+      SendNotification(message);
+      Print(message);
+   }
+}
+
 //+------------------------------------------------------------------+
 //| Filling indicator buffers from the iIchimoku indicator           |
 //+------------------------------------------------------------------+
