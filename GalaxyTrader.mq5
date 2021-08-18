@@ -7,6 +7,9 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 
+// Include
+#include <Trade\Trade.mqh>
+
 //--- indicator buffer
 input int tenkan_sen = 9; // period of Tenkan-sen
 input int kijun_sen = 26; // period of Kijun-sen
@@ -19,6 +22,7 @@ double Chinkou_Span_Buffer[];
 //---- handles for indicators
 int Ichimoku_handle; // handle of the indicator iIchimoku
 int values_to_copy = 30;
+CTrade trade;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -28,6 +32,7 @@ int OnInit() {
    Ichimoku_handle = iIchimoku(NULL, 0, 9, 26, 52);
 // create a timer with a 5 minutes period
    EventSetTimer(60);
+   Print("Welcome to the Galaxy!");
    return(INIT_SUCCEEDED);
 }
 //+------------------------------------------------------------------+
@@ -47,8 +52,26 @@ void OnTick() {
 //+------------------------------------------------------------------+
 void OnTimer() {
    Print("Finding...");
-   FindBlackHole();
-   FindGalaxy();
+   if (PositionsTotal() <= 3) {
+      // Info of the last tick.
+//-----------------------
+
+// To be used for getting recent/latest price quotes
+      MqlTick Latest_Price; // Structure to get the latest prices
+      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+
+// The BID price.
+      static double dBid_Price;
+
+// The ASK price.
+      static double dAsk_Price;
+
+      dBid_Price = Latest_Price.bid;  // Current Bid price.
+      dAsk_Price = Latest_Price.ask;  // Current Ask price.
+
+      FindBlackHole();
+      FindGalaxy();
+   }
 }
 
 //+------------------------------------------------------------------+
@@ -67,12 +90,20 @@ void FindBlackHole() {
 // Uptrend cloud
    if(Tenkan_sen_Buffer[0] < Senkou_Span_B_Buffer[0]
          && Tenkan_sen_Buffer[0] < Kijun_sen_Buffer[0]
+         && Tenkan_sen_Buffer[0] <= Tenkan_sen_Buffer[3]
+         && Tenkan_sen_Buffer[3] <= Tenkan_sen_Buffer[6]
+         && Tenkan_sen_Buffer[8] < Kijun_sen_Buffer[8]
          && Chinkou_Span_Buffer[0] < prev_26_close[25]
          && Senkou_Span_A_Buffer[0] < Senkou_Span_B_Buffer[0]) {
       // Send notification
       string message = "Found Black Hole !!!";
       SendNotification(message);
       Print(message);
+
+      // Buy
+      MqlTick Latest_Price; // Structure to get the latest prices
+      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+      trade.Sell(0.02, NULL, 0.0, 0.0, Latest_Price.bid - 1.07, "Galaxy Sell");
    }
 }
 
@@ -92,12 +123,20 @@ void FindGalaxy() {
 // Uptrend cloud
    if(Tenkan_sen_Buffer[0] > Senkou_Span_A_Buffer[0]
          && Tenkan_sen_Buffer[0] > Kijun_sen_Buffer[0]
+         && Tenkan_sen_Buffer[0] >= Tenkan_sen_Buffer[3]
+         && Tenkan_sen_Buffer[3] >= Tenkan_sen_Buffer[6]
+         && Tenkan_sen_Buffer[8] > Kijun_sen_Buffer[8]
          && Chinkou_Span_Buffer[0] > prev_26_close[25]
          && Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]) {
       // Send notification
       string message = "Found Galaxy !!!";
       SendNotification(message);
       Print(message);
+
+      // Buy
+      MqlTick Latest_Price; // Structure to get the latest prices
+      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+      trade.Buy(0.02, NULL, 0.0, 0.0, Latest_Price.ask + 1.07, "Galaxy Buy");
    }
 }
 
