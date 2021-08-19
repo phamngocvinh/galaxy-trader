@@ -71,9 +71,21 @@ void ClosePosition(int idx) {
 
    if (0 == 0
          && isDownFall()
-         && price_current - price_open > 1.07) {
+         && price_current - price_open > 1.07
+      ) {
       trade.PositionClose(PositionGetInteger(POSITION_TICKET));
    }
+}
+
+//+------------------------------------------------------------------+
+//| IsOnTop                                                          |
+//+------------------------------------------------------------------+
+bool isOnTop() {
+// Get previous close price
+   double prev_close[26];
+   CopyClose(_Symbol, _Period, 0, 26, prev_close);
+   
+   
 }
 
 //+------------------------------------------------------------------+
@@ -138,7 +150,7 @@ void FindGalaxy() {
       // Buy
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-      trade.Buy(0.02, NULL, 0.0, 0.0, 0.0, "Galaxy Buy");
+      trade.Buy(0.02, NULL, 0.0, Latest_Price.ask - 5.0, Latest_Price.ask + 0.57, "Galaxy Buy");
    }
 }
 
