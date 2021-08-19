@@ -87,7 +87,6 @@ bool isDownFall() {
    double prev_open[20];
    CopyOpen(_Symbol, _Period, 0, 20, prev_open);
 
-// If current price is going down
    if (0 == 0
 // If price is going down
          && prev_open[0] > prev_close[0]
