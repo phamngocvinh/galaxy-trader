@@ -53,46 +53,59 @@ void OnTick() {
 void OnTimer() {
    Print("Finding...");
    if (PositionsTotal() < 1) {
-      FindBlackHole();
       FindGalaxy();
    }
-}
 
-//+------------------------------------------------------------------+
-//| Find Downtrend                                                                 |
-//+------------------------------------------------------------------+
-void FindBlackHole() {
-// Get previous 26 close price
-   double prev_26_close[26];
-   CopyClose(_Symbol, _Period, 0, 26, prev_26_close);
-// Get ichimoku
-   FillArraysFromBuffers(Tenkan_sen_Buffer, Kijun_sen_Buffer, Senkou_Span_A_Buffer, Senkou_Span_B_Buffer, Chinkou_Span_Buffer,
-                         kijun_sen, Ichimoku_handle, values_to_copy);
-// Tenkan-sen above Cloud
-// Tenkan-sen above Kijun-sen
-// Chinkou-sen above Price
-// Uptrend cloud
-   if(Tenkan_sen_Buffer[8] < Senkou_Span_B_Buffer[8]
-         && Tenkan_sen_Buffer[8] < Kijun_sen_Buffer[8]
-         && Tenkan_sen_Buffer[8] <= Tenkan_sen_Buffer[5]
-         && Tenkan_sen_Buffer[5] <= Tenkan_sen_Buffer[2]
-         && Tenkan_sen_Buffer[0] <= Kijun_sen_Buffer[0]
-         && Chinkou_Span_Buffer[8] <= prev_26_close[25]
-         && Senkou_Span_A_Buffer[8] < Senkou_Span_B_Buffer[8]) {
-      // Send notification
-      string message = "Found Black Hole !!!";
-      SendNotification(message);
-      Print(message);
-
-      // Buy
-      MqlTick Latest_Price; // Structure to get the latest prices
-      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-      //trade.Sell(0.02, NULL, 0.0, 0.0, Latest_Price.bid - 0.57, "Galaxy Sell");
+   for (int idx = 0; idx < PositionsTotal(); idx++) {
+      ClosePosition(idx);
    }
 }
 
 //+------------------------------------------------------------------+
-//| Find Uptrend                                                                 |
+//| Close position                                                   |
+//+------------------------------------------------------------------+
+void ClosePosition(int idx) {
+   PositionGetSymbol(idx);
+   double price_open = PositionGetDouble(POSITION_PRICE_OPEN);
+   double price_current = PositionGetDouble(POSITION_PRICE_CURRENT);
+
+   if (0 == 0
+         && isDownFall()
+         && price_current - price_open > 1.07) {
+      trade.PositionClose(PositionGetInteger(POSITION_TICKET));
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Check if Downtrend occur                                         |
+//+------------------------------------------------------------------+
+bool isDownFall() {
+// Get previous close price
+   double prev_close[20];
+   CopyClose(_Symbol, _Period, 0, 20, prev_close);
+// Get previous open price
+   double prev_open[20];
+   CopyOpen(_Symbol, _Period, 0, 20, prev_open);
+
+// If current price is going down
+   if (0 == 0
+// If price is going down
+         && prev_open[0] > prev_close[0]
+         && prev_open[1] > prev_close[1]
+         && prev_open[2] > prev_close[2]
+         && prev_open[3] > prev_close[3]
+// If current price lower than previous price
+         && prev_close[0] > prev_close[1]
+         && prev_close[1] > prev_close[2]
+         && prev_close[2] > prev_close[3]) {
+
+      return true;
+   }
+   return false;
+}
+
+//+------------------------------------------------------------------+
+//| Find Uptrend                                                     |
 //+------------------------------------------------------------------+
 void FindGalaxy() {
 // Get previous 26 close price
@@ -102,13 +115,22 @@ void FindGalaxy() {
    FillArraysFromBuffers(Tenkan_sen_Buffer, Kijun_sen_Buffer, Senkou_Span_A_Buffer, Senkou_Span_B_Buffer, Chinkou_Span_Buffer,
                          kijun_sen, Ichimoku_handle, values_to_copy);
 
-   if(Tenkan_sen_Buffer[26] > Senkou_Span_B_Buffer[0] // Tenkan-sen above Cloud
-         && Tenkan_sen_Buffer[26] > Kijun_sen_Buffer[26] // Tenkan-sen above Kijun-sen
-         && Tenkan_sen_Buffer[26] >= Tenkan_sen_Buffer[23]
-         && Tenkan_sen_Buffer[23] >= Tenkan_sen_Buffer[20]
-         && Tenkan_sen_Buffer[26] >= Kijun_sen_Buffer[26]
-         && Chinkou_Span_Buffer[0] >= prev_26_close[0] // Chinkou-sen above Price
-         && Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]) { // Uptrend cloud
+   if(0 == 0
+         && Chinkou_Span_Buffer[0] >= prev_26_close[26] // Chinkou-sen above Price
+         && Tenkan_sen_Buffer[26] >= Kijun_sen_Buffer[26] // Tenkan-sen above Kijun-sen
+         && prev_26_close[26] > prev_26_close[25]
+         && prev_26_close[25] > prev_26_close[24]
+         && prev_26_close[24] > prev_26_close[23]
+// If Uptrend Cloud
+         && ((Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]
+              && Tenkan_sen_Buffer[26] > Senkou_Span_A_Buffer[0]
+              && Tenkan_sen_Buffer[26] < Senkou_Span_A_Buffer[0] + 2.0)
+             ||
+// If Downtrend Cloud
+             (Senkou_Span_A_Buffer[0] < Senkou_Span_B_Buffer[0]
+              && Tenkan_sen_Buffer[26] > Senkou_Span_B_Buffer[0]
+              && Tenkan_sen_Buffer[26] < Senkou_Span_B_Buffer[0] + 2.0))
+     ) {
       // Send notification
       string message = "Found Galaxy !!!";
       SendNotification(message);
@@ -117,18 +139,18 @@ void FindGalaxy() {
       // Buy
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-      trade.Buy(0.02, NULL, 0.0, 0.0, Latest_Price.ask + 0.57, "Galaxy Buy");
+      trade.Buy(0.02, NULL, 0.0, 0.0, 0.0, "Galaxy Buy");
    }
 }
 
 //+------------------------------------------------------------------+
 //| Filling indicator buffers from the iIchimoku indicator           |
 //+------------------------------------------------------------------+
-bool FillArraysFromBuffers(double &tenkan_sen_buffer[],     // indicator buffer of the Tenkan-sen line
-                           double &kijun_sen_buffer[],      // indicator buffer of the Kijun_sen line
-                           double &senkou_span_A_buffer[],  // indicator buffer of the Senkou Span A line
-                           double &senkou_span_B_buffer[],  // indicator buffer of the Senkou Span B line
-                           double &chinkou_span_buffer[],   // indicator buffer of the Chinkou Span line
+bool FillArraysFromBuffers(double & tenkan_sen_buffer[],    // indicator buffer of the Tenkan-sen line
+                           double & kijun_sen_buffer[],     // indicator buffer of the Kijun_sen line
+                           double & senkou_span_A_buffer[], // indicator buffer of the Senkou Span A line
+                           double & senkou_span_B_buffer[], // indicator buffer of the Senkou Span B line
+                           double & chinkou_span_buffer[],  // indicator buffer of the Chinkou Span line
                            int senkou_span_shift,           // shift of the Senkou Span lines in the future direction
                            int ind_handle,                  // handle of the iIchimoku indicator
                            int amount                       // number of copied values
@@ -177,4 +199,6 @@ bool FillArraysFromBuffers(double &tenkan_sen_buffer[],     // indicator buffer 
 //--- everything is fine
    return(true);
 }
+//+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+
