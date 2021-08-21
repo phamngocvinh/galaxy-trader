@@ -52,11 +52,11 @@ void OnTick() {
 //+------------------------------------------------------------------+
 void OnTimer() {
    Print("Finding...");
-   if (PositionsTotal() < 1) {
+   if(PositionsTotal() < 1) {
       FindGalaxy();
    }
 
-   for (int idx = 0; idx < PositionsTotal(); idx++) {
+   for(int idx = 0; idx < PositionsTotal(); idx++) {
       ClosePosition(idx);
    }
 }
@@ -66,13 +66,10 @@ void OnTimer() {
 //+------------------------------------------------------------------+
 void ClosePosition(int idx) {
    PositionGetSymbol(idx);
-   double price_open = PositionGetDouble(POSITION_PRICE_OPEN);
-   double price_current = PositionGetDouble(POSITION_PRICE_CURRENT);
 
-   if (0 == 0
+   if(0 == 0
          && isDownFall()
-         && price_current - price_open > 1.07
-      ) {
+     ) {
       trade.PositionClose(PositionGetInteger(POSITION_TICKET));
    }
 }
@@ -81,11 +78,20 @@ void ClosePosition(int idx) {
 //| IsOnTop                                                          |
 //+------------------------------------------------------------------+
 bool isOnTop() {
+
+   return true;
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool isPriceInRange() {
 // Get previous close price
    double prev_close[26];
    CopyClose(_Symbol, _Period, 0, 26, prev_close);
-   
-   
+
+
+   return true;
 }
 
 //+------------------------------------------------------------------+
@@ -99,17 +105,26 @@ bool isDownFall() {
    double prev_open[20];
    CopyOpen(_Symbol, _Period, 0, 20, prev_open);
 
-   if (0 == 0
+   double price_open = PositionGetDouble(POSITION_PRICE_OPEN);
+   double price_current = PositionGetDouble(POSITION_PRICE_CURRENT);
+   if(0 == 0
 // If price is going down
-         && prev_open[0] > prev_close[0]
-         && prev_open[1] > prev_close[1]
-         && prev_open[2] > prev_close[2]
-         && prev_open[3] > prev_close[3]
+         && prev_open[18] > prev_close[18]
+         && prev_open[17] > prev_close[17]
+         && prev_open[16] > prev_close[16]
+         && prev_open[15] > prev_close[15]
 // If current price lower than previous price
-         && prev_close[0] > prev_close[1]
-         && prev_close[1] > prev_close[2]
-         && prev_close[2] > prev_close[3]) {
+         && prev_close[18] < prev_close[17]
+         && prev_close[17] < prev_close[16]
+         && prev_close[15] < prev_close[14]
+         && price_current - price_open > 1.07) {
 
+      return true;
+   }
+// Get ichimoku
+   FillArraysFromBuffers(Tenkan_sen_Buffer, Kijun_sen_Buffer, Senkou_Span_A_Buffer, Senkou_Span_B_Buffer, Chinkou_Span_Buffer,
+                         kijun_sen, Ichimoku_handle, values_to_copy);
+   if (Tenkan_sen_Buffer[26] < Kijun_sen_Buffer[26]) {
       return true;
    }
    return false;
@@ -131,7 +146,6 @@ void FindGalaxy() {
          && Tenkan_sen_Buffer[26] >= Kijun_sen_Buffer[26] // Tenkan-sen above Kijun-sen
          && prev_26_close[26] > prev_26_close[25]
          && prev_26_close[25] > prev_26_close[24]
-         && prev_26_close[24] > prev_26_close[23]
 // If Uptrend Cloud
          && ((Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]
               && Tenkan_sen_Buffer[26] > Senkou_Span_A_Buffer[0]
@@ -150,7 +164,7 @@ void FindGalaxy() {
       // Buy
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-      trade.Buy(0.02, NULL, 0.0, Latest_Price.ask - 5.0, Latest_Price.ask + 0.57, "Galaxy Buy");
+      trade.Buy(0.02, NULL, 0.0, Latest_Price.ask - 2.0, 0.0, "Galaxy Buy");
    }
 }
 
