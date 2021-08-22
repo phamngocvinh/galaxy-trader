@@ -84,30 +84,22 @@ void OnTimer() {
 void TakeProfit() {
 
    for(int idx = 0; idx < PositionsTotal(); idx++) {
-      ClosePosition(idx);
-   }
-}
+      PositionGetSymbol(idx);
 
-//+------------------------------------------------------------------+
-//| Close position                                                   |
-//+------------------------------------------------------------------+
-void ClosePosition(int idx) {
-   PositionGetSymbol(idx);
+      double profit = PositionGetDouble(POSITION_PROFIT);
 
-   double profit = PositionGetDouble(POSITION_PROFIT);
-
-   if(profit > 2.0
-         && (IsTenkanCrossKijun()
-             || IsChikouTouchPrice())
-     ) {
-      trade.PositionClose(PositionGetInteger(POSITION_TICKET));
+      if(profit > 3.0
+            && (IsTenkanCrossKijunFromAbove()
+                || IsChikouTouchPrice())) {
+         trade.PositionClose(PositionGetInteger(POSITION_TICKET));
+      }
    }
 }
 //+------------------------------------------------------------------+
 //| Find Stop Loss for Buy Position                                  |
 //+------------------------------------------------------------------+
 double FindStopLossBuy() {
-   for(int i = 0; i < sizeof(Senkou_Span_A_Buffer); i++) {
+   for(int i = 0; i < ArraySize(Senkou_Span_A_Buffer); i++) {
       if (Senkou_Span_A_Buffer[i] > Senkou_Span_B_Buffer[i]) {
          return Senkou_Span_B_Buffer[i];
       }
@@ -158,11 +150,13 @@ bool IsTenkanCrossKijun() {
 //| Is Tenkan Cross Kijun From Above                                 |
 //+------------------------------------------------------------------+
 bool IsTenkanCrossKijunFromAbove() {
-   if (Tenkan_sen_Buffer[26] < Kijun_sen_Buffer[26]
-         && Tenkan_sen_Buffer[25] < Kijun_sen_Buffer[25]
-         && Tenkan_sen_Buffer[24] < Kijun_sen_Buffer[24]
-         && Tenkan_sen_Buffer[23] < Kijun_sen_Buffer[23]
-         && Tenkan_sen_Buffer[22] == Kijun_sen_Buffer[22]) {
+   if (0==0
+    //&& Tenkan_sen_Buffer[26] < Kijun_sen_Buffer[26]
+         && Tenkan_sen_Buffer[25] > Kijun_sen_Buffer[25]
+         //&& Tenkan_sen_Buffer[24] > Kijun_sen_Buffer[24]
+         //&& Tenkan_sen_Buffer[23] < Kijun_sen_Buffer[23]
+         && Tenkan_sen_Buffer[26] == Kijun_sen_Buffer[26]
+         ) {
       Print("Tenkan Cross Kijun From Above");
       return true;
    }
