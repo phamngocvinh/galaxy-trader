@@ -55,6 +55,21 @@ void OnTick() {
                          Senkou_Span_B_Buffer,
                          Chikou_Span_Buffer,
                          Ichimoku_handle);
+
+
+////Is Chikou Above Price
+//IsChikouAbovePrice();
+////Is Price Above Cloud
+//IsPriceAboveCloud();
+//// Is Tenkan Cross Kijun From Below
+//IsTenkanCrossKijunFromBelow();
+//// Is Tenkan Cross Kijun From Above
+//IsTenkanCrossKijunFromAbove();
+//// Is Chikou Touch Price
+//IsChikouTouchPrice();
+
+   GalaxyBuy();
+   TakeProfit();
 }
 //+------------------------------------------------------------------+
 //| Timer function                                                   |
@@ -62,7 +77,175 @@ void OnTick() {
 void OnTimer() {
 //---
 
-}//+------------------------------------------------------------------+
+}
+//+------------------------------------------------------------------+
+//| Take Profit                                                      |
+//+------------------------------------------------------------------+
+void TakeProfit() {
+
+   for(int idx = 0; idx < PositionsTotal(); idx++) {
+      ClosePosition(idx);
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Close position                                                   |
+//+------------------------------------------------------------------+
+void ClosePosition(int idx) {
+   PositionGetSymbol(idx);
+
+   double profit = PositionGetDouble(POSITION_PROFIT);
+
+   if(profit > 2.0
+         && (IsTenkanCrossKijun()
+             || IsChikouTouchPrice())
+     ) {
+      trade.PositionClose(PositionGetInteger(POSITION_TICKET));
+   }
+}
+//+------------------------------------------------------------------+
+//| Find Stop Loss for Buy Position                                  |
+//+------------------------------------------------------------------+
+double FindStopLossBuy() {
+   for(int i = 0; i < sizeof(Senkou_Span_A_Buffer); i++) {
+      if (Senkou_Span_A_Buffer[i] > Senkou_Span_B_Buffer[i]) {
+         return Senkou_Span_B_Buffer[i];
+      }
+   }
+   return 0;
+}
+//+------------------------------------------------------------------+
+//| Buy Command                                                      |
+//+------------------------------------------------------------------+
+void GalaxyBuy() {
+   if (PositionsTotal() < 1
+         && IsChikouAbovePrice()
+         && IsPriceAboveCloud()
+         && IsTenkanCrossKijunFromBelow()) {
+      // Buy
+      MqlTick Latest_Price; // Structure to get the latest prices
+      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+      trade.Buy(0.02, NULL, 0.0, FindStopLossBuy(), 0.0, "Galaxy Buy");
+   }
+}
+//+------------------------------------------------------------------+
+//| Is Chikou Touch Price                                            |
+//+------------------------------------------------------------------+
+bool IsChikouTouchPrice() {
+// Get previous high price
+   double prev_open[27];
+   CopyOpen(_Symbol, _Period, 0, 27, prev_open);
+// Get previous low price
+   double prev_close[27];
+   CopyClose(_Symbol, _Period, 0, 27, prev_close);
+
+   if(Chikou_Span_Buffer[0] < prev_open[0]
+         && Chikou_Span_Buffer[0] > prev_close[0]) {
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+//| Is Tenkan Cross Kijun                                            |
+//+------------------------------------------------------------------+
+bool IsTenkanCrossKijun() {
+   if (Tenkan_sen_Buffer[26] == Kijun_sen_Buffer[26]) {
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+//| Is Tenkan Cross Kijun From Above                                 |
+//+------------------------------------------------------------------+
+bool IsTenkanCrossKijunFromAbove() {
+   if (Tenkan_sen_Buffer[26] < Kijun_sen_Buffer[26]
+         && Tenkan_sen_Buffer[25] < Kijun_sen_Buffer[25]
+         && Tenkan_sen_Buffer[24] < Kijun_sen_Buffer[24]
+         && Tenkan_sen_Buffer[23] < Kijun_sen_Buffer[23]
+         && Tenkan_sen_Buffer[22] == Kijun_sen_Buffer[22]) {
+      Print("Tenkan Cross Kijun From Above");
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+//| Is Tenkan Cross Kijun From Below                                 |
+//+------------------------------------------------------------------+
+bool IsTenkanCrossKijunFromBelow() {
+   if (0 == 0
+         && Tenkan_sen_Buffer[26] == Kijun_sen_Buffer[26]
+//&& Tenkan_sen_Buffer[26] > Kijun_sen_Buffer[26]
+//&& Tenkan_sen_Buffer[25] > Kijun_sen_Buffer[25]
+//&& Tenkan_sen_Buffer[24] > Kijun_sen_Buffer[24]
+//&& Tenkan_sen_Buffer[23] > Kijun_sen_Buffer[23]
+//&& Tenkan_sen_Buffer[22] == Kijun_sen_Buffer[22]
+      ) {
+      Print("Tenkan Cross Kijun From Below");
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+//| IsPriceAboveCloud                                                |
+//+------------------------------------------------------------------+
+bool IsPriceAboveCloud() {
+// Get previous close price
+   double prev_close[3];
+   CopyClose(_Symbol, _Period, 0, 3, prev_close);
+
+   if(IsGreenCloud()
+         && prev_close[0] > Senkou_Span_A_Buffer[0]
+         && prev_close[1] > Senkou_Span_A_Buffer[0]
+         && prev_close[2] > Senkou_Span_A_Buffer[0]) {
+      Print("Price above Cloud");
+      return true;
+   }
+   if(IsRedCloud()
+         && prev_close[0] > Senkou_Span_B_Buffer[0]
+         && prev_close[1] > Senkou_Span_B_Buffer[0]
+         && prev_close[2] > Senkou_Span_B_Buffer[0]) {
+      Print("Price above Cloud");
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+//| Is Uptrend Cloud                                                 |
+//+------------------------------------------------------------------+
+bool IsGreenCloud() {
+   if (Senkou_Span_A_Buffer[0] > Senkou_Span_B_Buffer[0]
+         && Senkou_Span_A_Buffer[1] > Senkou_Span_B_Buffer[1]
+         && Senkou_Span_A_Buffer[2] > Senkou_Span_B_Buffer[2]) {
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+//| Is Downtrend Cloud                                                 |
+//+------------------------------------------------------------------+
+bool IsRedCloud() {
+   if (Senkou_Span_A_Buffer[0] < Senkou_Span_B_Buffer[0]
+         && Senkou_Span_A_Buffer[1] < Senkou_Span_B_Buffer[1]
+         && Senkou_Span_A_Buffer[2] < Senkou_Span_B_Buffer[2]) {
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+//| IsChikouAbovePrice                                               |
+//+------------------------------------------------------------------+
+bool IsChikouAbovePrice() {
+// Get previous open price
+   double prev_high[29];
+   CopyHigh(_Symbol, _Period, 0, 29, prev_high);
+
+   if (Chikou_Span_Buffer[0] > prev_high[0]) {
+      Print("Chikou above Price");
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
 //| Filling indicator buffers from the iIchimoku indicator           |
 //+------------------------------------------------------------------+
 bool FillArraysFromBuffers(double & tenkan_sen_buffer[],    // indicator buffer of the Tenkan-sen line
@@ -72,9 +255,9 @@ bool FillArraysFromBuffers(double & tenkan_sen_buffer[],    // indicator buffer 
                            double & chinkou_span_buffer[],  // indicator buffer of the Chinkou Span line
                            int ind_handle                   // handle of the iIchimoku indicator
                           ) {
-   // Shift of the Senkou Span lines in the future direction
+// Shift of the Senkou Span lines in the future direction
    int senkou_span_shift = 26;
-   // number of copied values
+// number of copied values
    int amount = 27;
 //--- reset error code
    ResetLastError();
