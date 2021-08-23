@@ -10,6 +10,12 @@
 // Include
 #include <Trade\Trade.mqh>
 
+// Parameters
+input double INPUT_LOT = 0.01;
+input ENUM_TIMEFRAMES INPUT_TIMEFRAME = PERIOD_M30;
+input string INPUT_SYMBOL = "USDJPY";
+
+// CTrade
 CTrade trade;
 
 double Tenkan_sen_Buffer[];
@@ -26,12 +32,19 @@ int OnInit() {
 //--- create timer
    EventSetTimer(60);
 
-
-// Initialize Ichimoku
-   Ichimoku_handle = iIchimoku(NULL, 0, 9, 26, 52);
-
    Print("--- Welcome to the Galaxy ---");
    Print("Created by Pham Ngoc Vinh!");
+
+// Check if valid symbol
+   if(!SymbolSelect(INPUT_SYMBOL, true)) {
+      Print("Invalid symbol!");
+      ExpertRemove();
+      return(0);
+   }
+
+// Initialize Ichimoku
+   Ichimoku_handle = iIchimoku(INPUT_SYMBOL, INPUT_TIMEFRAME, 9, 26, 52);
+
 //---
    return(INIT_SUCCEEDED);
 }
@@ -127,7 +140,7 @@ void GalaxyBuy() {
       // Buy
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-      trade.Buy(0.02, NULL, 0.0, FindStopLossBuy(), 0.0, "Galaxy Buy");
+      trade.Buy(INPUT_LOT, INPUT_SYMBOL, 0.0, FindStopLossBuy(), 0.0, "Galaxy Buy");
    }
 }
 //+------------------------------------------------------------------+
@@ -136,10 +149,10 @@ void GalaxyBuy() {
 bool IsChikouTouchPrice() {
 // Get previous high price
    double prev_open[27];
-   CopyOpen(_Symbol, _Period, 0, 27, prev_open);
+   CopyOpen(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 27, prev_open);
 // Get previous low price
    double prev_close[27];
-   CopyClose(_Symbol, _Period, 0, 27, prev_close);
+   CopyClose(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 27, prev_close);
 
    if(Chikou_Span_Buffer[0] < prev_open[0]
          && Chikou_Span_Buffer[0] > prev_close[0]) {
@@ -195,7 +208,7 @@ bool IsTenkanCrossKijunFromBelow() {
 bool IsPriceAboveCloud() {
 // Get previous close price
    double prev_close[3];
-   CopyClose(_Symbol, _Period, 0, 3, prev_close);
+   CopyClose(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 3, prev_close);
 
    if(IsGreenCloud()
          && prev_close[0] > Senkou_Span_A_Buffer[0]
@@ -240,10 +253,10 @@ bool IsRedCloud() {
 //+------------------------------------------------------------------+
 bool IsChikouAbovePrice() {
 // Get previous open price
-   double prev_high[29];
-   CopyHigh(_Symbol, _Period, 0, 29, prev_high);
+   double prev_open[29];
+   CopyOpen(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 29, prev_open);
 
-   if (Chikou_Span_Buffer[0] > prev_high[0]) {
+   if (Chikou_Span_Buffer[0] > prev_open[1]) {
       Print("Chikou above Price");
       return true;
    }
