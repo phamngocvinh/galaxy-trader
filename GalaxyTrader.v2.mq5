@@ -15,6 +15,11 @@ input double INPUT_LOT = 0.01;
 input ENUM_TIMEFRAMES INPUT_TIMEFRAME = PERIOD_M30;
 input string INPUT_SYMBOL = "USDJPY";
 
+// number of copied values
+const int amount = 30;
+// number of copied values
+const int default_amount = 27;
+
 // CTrade
 CTrade trade;
 
@@ -256,11 +261,20 @@ bool IsChikouAbovePrice() {
    double prev_open[29];
    CopyOpen(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 29, prev_open);
 
-   if (Chikou_Span_Buffer[0] > prev_open[1]) {
+   if (GetCurrentChikou() > prev_open[1]) {
       Print("Chikou above Price");
       return true;
    }
    return false;
+}
+//+------------------------------------------------------------------+
+//| Get Current Chikou Value                                         |
+//+------------------------------------------------------------------+
+double GetCurrentChikou() {
+// Chikou index in chart: [old]...[new]
+// [0] [1] [2] [3] [4] [5] [6]
+   int idx = amount - default_amount;
+   return Chikou_Span_Buffer[idx];
 }
 //+------------------------------------------------------------------+
 //| Filling indicator buffers from the iIchimoku indicator           |
@@ -274,8 +288,6 @@ bool FillArraysFromBuffers(double & tenkan_sen_buffer[],    // indicator buffer 
                           ) {
 // Shift of the Senkou Span lines in the future direction
    int senkou_span_shift = 26;
-// number of copied values
-   int amount = 27;
 //--- reset error code
    ResetLastError();
 //--- fill a part of the Tenkan_sen_Buffer array with values from the indicator buffer that has 0 index
