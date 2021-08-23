@@ -65,11 +65,12 @@ void OnTick() {
 //IsTenkanCrossKijunFromBelow();
 //// Is Tenkan Cross Kijun From Above
 //IsTenkanCrossKijunFromAbove();
-//// Is Chikou Touch Price
+//// Is Chikou Touch Priceameta
 //IsChikouTouchPrice();
 
    GalaxyBuy();
    TakeProfit();
+   StopLoss();
 }
 //+------------------------------------------------------------------+
 //| Timer function                                                   |
@@ -77,6 +78,15 @@ void OnTick() {
 void OnTimer() {
 //---
 
+}
+//+------------------------------------------------------------------+
+//| Adjust Stop Loss                                                 |
+//+------------------------------------------------------------------+
+void StopLoss() {
+// Set stop loss according to cloud
+   for(int idx = 0; idx < PositionsTotal(); idx++) {
+      trade.PositionModify(PositionGetTicket(idx), FindStopLossBuy(), 0.0);
+   }
 }
 //+------------------------------------------------------------------+
 //| Take Profit                                                      |
@@ -150,13 +160,13 @@ bool IsTenkanCrossKijun() {
 //| Is Tenkan Cross Kijun From Above                                 |
 //+------------------------------------------------------------------+
 bool IsTenkanCrossKijunFromAbove() {
-   if (0==0
-    //&& Tenkan_sen_Buffer[26] < Kijun_sen_Buffer[26]
+   if (0 == 0
+//&& Tenkan_sen_Buffer[26] < Kijun_sen_Buffer[26]
          && Tenkan_sen_Buffer[25] > Kijun_sen_Buffer[25]
-         //&& Tenkan_sen_Buffer[24] > Kijun_sen_Buffer[24]
-         //&& Tenkan_sen_Buffer[23] < Kijun_sen_Buffer[23]
+//&& Tenkan_sen_Buffer[24] > Kijun_sen_Buffer[24]
+//&& Tenkan_sen_Buffer[23] < Kijun_sen_Buffer[23]
          && Tenkan_sen_Buffer[26] == Kijun_sen_Buffer[26]
-         ) {
+      ) {
       Print("Tenkan Cross Kijun From Above");
       return true;
    }
