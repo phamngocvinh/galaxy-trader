@@ -11,7 +11,7 @@
 #include <Trade\Trade.mqh>
 
 // Parameters
-input double INPUT_LOT = 0.05;
+input double INPUT_LOT = 0.01;
 input ENUM_TIMEFRAMES INPUT_TIMEFRAME = PERIOD_M30;
 input string INPUT_SYMBOL = "USDJPY";
 
@@ -76,7 +76,7 @@ void OnTick() {
 
    GalaxyBuy();
    TakeProfit();
-   StopLoss();
+   //StopLoss();
 }
 //+------------------------------------------------------------------+
 //| Timer function                                                   |
@@ -91,16 +91,20 @@ void OnTimer() {
 void StopLoss() {
 // Set stop loss according to cloud
    for(int idx = 0; idx < PositionsTotal(); idx++) {
-      trade.PositionModify(PositionGetTicket(idx), FindStopLossBuy(), 0.0);
+      trade.PositionModify(PositionGetTicket(idx), FindStopLossBuy(PositionGetTicket(idx)), 0.0);
    }
 }
 //+------------------------------------------------------------------+
 //| Find Stop Loss for Buy Position                                  |
 //+------------------------------------------------------------------+
-double FindStopLossBuy() {
+double FindStopLossBuy(long ticket) {
    for(int i = amount - default_amount; i < ArraySize(Senkou_Span_A_Buffer); i++) {
       if (Senkou_Span_A_Buffer[i] > Senkou_Span_B_Buffer[i]) {
-         return Senkou_Span_B_Buffer[i] - (Point() * 30);
+         PositionSelectByTicket(ticket);
+         if (PositionGetDouble(POSITION_SL) >= PositionGetDouble(POSITION_PRICE_OPEN) - (200 * Point())) {
+            return PositionGetDouble(POSITION_PRICE_OPEN) - (200 * Point());
+         }
+         return Senkou_Span_B_Buffer[i];
       }
    }
    return 0;
@@ -116,10 +120,10 @@ void TakeProfit() {
       double price_open = PositionGetDouble(POSITION_PRICE_OPEN);
       double price_current = PositionGetDouble(POSITION_PRICE_CURRENT);
 
-      if(price_current > price_open + (200 * Point())
-            && (IsTenkanCrossKijun()
-                || IsChikouTouchPrice()
-                || IsThreeFall())) {
+      if (0 == 0
+            && price_current > price_open + (100 * Point())
+            && price_current < CurrentSenkouA()
+         ) {
          trade.PositionClose(PositionGetInteger(POSITION_TICKET));
       }
    }
@@ -148,9 +152,12 @@ void GalaxyBuy() {
          && IsChikouAbovePrice()
          && IsPriceAboveCloud()
          && CurrentTenkan() > CurrentKijun()
-         && IsPriceNearCloud()) {
+         && IsPriceNearCloud()
+      ) {
       // Buy
-      trade.Buy(INPUT_LOT, INPUT_SYMBOL, 0.0, FindStopLossBuy(), 0.0, "Galaxy Buy");
+      MqlTick Latest_Price; // Structure to get the latest prices
+      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+      trade.Buy(INPUT_LOT, INPUT_SYMBOL, 0.0, Latest_Price.bid - (50 * Point()), 0.0, "Galaxy Buy");
    }
 }
 //+------------------------------------------------------------------+
@@ -207,16 +214,15 @@ bool IsPriceAboveCloud() {
    SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
    if(IsGreenCloud()
-         && prev_close[2] > CurrentSenkouA()
-         && prev_close[1] > CurrentSenkouA()
-         && Latest_Price.ask > prev_close[1]) {
+&& prev_close[2] > CurrentSenkouA()
+&& Latest_Price.ask > prev_close[2]
+     ) {
       Print("Price above Cloud");
       return true;
    }
    if(IsRedCloud()
-         && prev_close[2] > CurrentSenkouB()
-         && prev_close[1] > CurrentSenkouB()
-         && Latest_Price.ask > prev_close[1]) {
+&& prev_close[2] > CurrentSenkouB()
+&& Latest_Price.ask > prev_close[2]) {
       Print("Price above Cloud");
       return true;
    }
