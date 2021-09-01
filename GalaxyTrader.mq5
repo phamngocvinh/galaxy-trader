@@ -8,9 +8,8 @@
 #include "Ichimoku.mq5"
 
 // Parameters
-input double INPUT_LOT = 0.01;
-input ENUM_TIMEFRAMES INPUT_TIMEFRAME = PERIOD_M30;
-input string INPUT_SYMBOL = "USDJPY";
+const ENUM_TIMEFRAMES INPUT_TIMEFRAME = PERIOD_M30;
+const string INPUT_SYMBOL = ChartSymbol();
 
 // Ichimoku
 double Tenkan_sen_Buffer[];
@@ -24,15 +23,27 @@ const int amount = 30;
 // Default number of copied values
 const int default_amount = 27;
 
+// Variables
+// Is send Buy notification
+bool isSendBuy = true;
+// Is send Take Profit notification
+bool isSendTP = false;
+
+// Default timer = 10mins = 600sec
+const int default_timer = 600;
+
+// M30 timer
+int m30Timer = 0;
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   Print("--- Welcome to the Galaxy ---");
+   SendNotification("Welcome to the Galaxy !!!\r\nSymbol: " + INPUT_SYMBOL);
 
 //--- create timer
-   EventSetTimer(60);
+   EventSetTimer(default_timer);
 
 // Check if valid symbol
    if(!isValidSymbol()) {
@@ -71,10 +82,28 @@ void OnTick()
                          Chikou_Span_Buffer,
                          Ichimoku_handle);
 
-   if (IsChikouAbovePrice()
+   if (isSendBuy
+       && IsChikouAbovePrice()
        && CurrentTenkan() > CurrentKijun()
        && IsPriceClosedAboveCloud()) {
-      Print("Buy");
+
+      isSendBuy = false;
+      SendNotification("Galaxy Buy!!!\r\n" + INPUT_SYMBOL);
+   }
+
+   if (isSendTP && isBuying()) {
+      MqlTick Latest_Price; // Structure to get the latest prices
+      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+
+      // If price touch Cloud
+      if (Latest_Price.ask <= CurrentSenkouA()
+          // If become Red cloud
+          || CurrentSenkouA(default_amount - 1) < CurrentSenkouB(default_amount - 1)
+          || IsThreeFall()) {
+
+         isSendTP = false;
+         SendNotification("Take Profit!!!\r\n" + INPUT_SYMBOL);
+      }
    }
 }
 //+------------------------------------------------------------------+
@@ -85,12 +114,17 @@ void OnTick()
 void OnTimer()
 {
 //---
+   isSendTP = true;
 
+// Count timer
+   m30Timer += 600;
+
+// If Buy order not exist, send notification
+   if (m30Timer == 1800) {
+      m30Timer = 0;
+      if (!isBuying()) {
+         isSendBuy = true;
+      }
+   }
 }
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-
 //+------------------------------------------------------------------+
