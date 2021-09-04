@@ -16,6 +16,27 @@ bool isValidSymbol ()
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
+//| Check if current price is near cloud                             |
+//+------------------------------------------------------------------+
+bool IsPriceNearCloud()
+{
+   MqlTick Latest_Price; // Structure to get the latest prices
+   SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+
+   if (CurrentSenkouA() > CurrentSenkouB()
+         && Latest_Price.ask < CurrentSenkouA() + (50 * Point())) {
+         
+      return true;
+   } else if (CurrentSenkouB() > CurrentSenkouA()
+              && Latest_Price.ask < CurrentSenkouB() + (50 * Point())) {
+              
+      return true;
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
 //| Check if buying                                                  |
 //+------------------------------------------------------------------+
 bool isBuying()
@@ -25,7 +46,7 @@ bool isBuying()
       PositionGetSymbol(idx);
 
       if (PositionGetString(POSITION_SYMBOL) == INPUT_SYMBOL
-          && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY) {
+            && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY) {
          return true;
       }
    }
@@ -48,15 +69,15 @@ bool IsPriceClosedAboveCloud()
 
 // If Green cloud and Open above cloud and Closed above cloud
    if (CurrentSenkouA() > CurrentSenkouB()
-       && prev_open[0] > CurrentSenkouA()
-       && prev_close[0] > CurrentSenkouA()) {
+         && prev_open[0] > CurrentSenkouA()
+         && prev_close[0] > CurrentSenkouA()) {
       return true;
    }
 
 // If Red cloud and Open above cloud and Closed above cloud
    if (CurrentSenkouB() > CurrentSenkouA()
-       && prev_open[0] > CurrentSenkouB()
-       && prev_close[0] > CurrentSenkouB()) {
+         && prev_open[0] > CurrentSenkouB()
+         && prev_close[0] > CurrentSenkouB()) {
       return true;
    }
 
@@ -79,13 +100,13 @@ bool IsChikouAbovePrice()
 
 // Chikou above bull price
    if (prev_open[0] > prev_close[0]
-       && CurrentChikou() > prev_open[0]) {
+         && CurrentChikou() > prev_open[0]) {
       return true;
    }
 
 // Chikou above bear price
    if (prev_close[0] > prev_open[0]
-       && CurrentChikou() > prev_close[0]) {
+         && CurrentChikou() > prev_close[0]) {
       return true;
    }
 
@@ -95,7 +116,8 @@ bool IsChikouAbovePrice()
 //+------------------------------------------------------------------+
 //| Check if three falling stars                                     |
 //+------------------------------------------------------------------+
-bool IsThreeFall() {
+bool IsThreeFall()
+{
 
 // Get previous low price
    double prev_close[4];

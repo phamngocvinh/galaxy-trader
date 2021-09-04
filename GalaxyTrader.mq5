@@ -85,7 +85,8 @@ void OnTick()
    if (isSendBuy
        && IsChikouAbovePrice()
        && CurrentTenkan() > CurrentKijun()
-       && IsPriceClosedAboveCloud()) {
+       && IsPriceClosedAboveCloud()
+       && IsPriceNearCloud()) {
 
       isSendBuy = false;
       SendNotification("Galaxy Buy!!!\r\n" + INPUT_SYMBOL);
@@ -95,10 +96,11 @@ void OnTick()
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
-      // If price touch Cloud
+      // If Price touch Cloud
       if (Latest_Price.ask <= CurrentSenkouA()
-          // If become Red cloud
+          // If Cloud become Red cloud
           || CurrentSenkouA(default_amount - 1) < CurrentSenkouB(default_amount - 1)
+          // If prev 3 closed price is going down
           || IsThreeFall()) {
 
          isSendTP = false;
