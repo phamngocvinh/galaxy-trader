@@ -82,17 +82,26 @@ void OnTick()
                          Chikou_Span_Buffer,
                          Ichimoku_handle);
 
-   if (isSendBuy
+   if (0 == 0
+// Is Send Buy Notification
+       && isSendBuy
+// If not currently buying
+       && !IsBuying()
+// If Chiukou-sen above Price
        && IsChikouAbovePrice()
+// If Tenkan > Kijun
        && CurrentTenkan() > CurrentKijun()
+// If Price Closed Above Cloud
        && IsPriceClosedAboveCloud()
+// If Tick price near Cloud
        && IsPriceNearCloud()) {
 
       isSendBuy = false;
       SendNotification("Galaxy Buy!!!\r\n" + INPUT_SYMBOL);
+      Print("Galaxy Buy!!!\r\n" + INPUT_SYMBOL);
    }
 
-   if (isSendTP && isBuying()) {
+   if (isSendTP && IsBuying()) {
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
@@ -105,6 +114,7 @@ void OnTick()
 
          isSendTP = false;
          SendNotification("Take Profit!!!\r\n" + INPUT_SYMBOL);
+         Print("Take Profit!!!\r\n" + INPUT_SYMBOL);
       }
    }
 }
@@ -115,18 +125,10 @@ void OnTick()
 //+------------------------------------------------------------------+
 void OnTimer()
 {
-//---
+// Send TP Notification
    isSendTP = true;
 
-// Count timer
-   m30Timer += 600;
-
-// If Buy order not exist, send notification
-   if (m30Timer == 1800) {
-      m30Timer = 0;
-      if (!isBuying()) {
-         isSendBuy = true;
-      }
-   }
+// Send Buy notification
+   isSendBuy = true;
 }
 //+------------------------------------------------------------------+

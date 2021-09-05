@@ -24,11 +24,11 @@ bool IsPriceNearCloud()
    SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
    if (CurrentSenkouA() > CurrentSenkouB()
-         && Latest_Price.ask < CurrentSenkouA() + (50 * Point())) {
+         && Latest_Price.ask < CurrentSenkouA() + (150 * Point())) {
          
       return true;
    } else if (CurrentSenkouB() > CurrentSenkouA()
-              && Latest_Price.ask < CurrentSenkouB() + (50 * Point())) {
+              && Latest_Price.ask < CurrentSenkouB() + (150 * Point())) {
               
       return true;
    }
@@ -39,7 +39,7 @@ bool IsPriceNearCloud()
 //+------------------------------------------------------------------+
 //| Check if buying                                                  |
 //+------------------------------------------------------------------+
-bool isBuying()
+bool IsBuying()
 {
 // Check if Buy order currently exist
    for (int idx = 0; idx < PositionsTotal(); idx++) {
