@@ -5,6 +5,7 @@
 //+------------------------------------------------------------------+
 // Include
 #include "Common.mq5"
+#include "Common_Sell.mq5"
 #include "Ichimoku.mq5"
 
 // Parameters
@@ -110,7 +111,10 @@ void OnTick()
           // If Cloud become Red cloud
           || CurrentSenkouA(default_amount - 1) < CurrentSenkouB(default_amount - 1)
           // If prev 3 closed price is going down
-          || IsThreeFall()) {
+          || IsThreeFall()
+          // If Tenkan Cross Kijun From Above
+          || IsTenkanCrossKijunFromAbove()
+         ) {
 
          isSendTP = false;
          SendNotification("Take Profit!!!\r\n" + INPUT_SYMBOL);

@@ -1,35 +1,21 @@
 //+------------------------------------------------------------------+
-//| Common Function                                                  |
+//| Common SELL funtion                                                  |
 //+------------------------------------------------------------------+
-//+------------------------------------------------------------------+
-//| Check if valid symbol                                            |
-//+------------------------------------------------------------------+
-bool isValidSymbol ()
-{
-   if(!SymbolSelect(INPUT_SYMBOL, true)) {
-      Print("Invalid symbol!");
-      ExpertRemove();
-      return false;
-   }
-   return true;
-}
-//+------------------------------------------------------------------+
-
 //+------------------------------------------------------------------+
 //| Check if current price is near cloud                             |
 //+------------------------------------------------------------------+
-bool IsPriceNearCloud()
+bool IsPriceNearCloud_Sell()
 {
    MqlTick Latest_Price; // Structure to get the latest prices
    SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
-   if (CurrentSenkouA() > CurrentSenkouB()
-       && Latest_Price.ask < CurrentSenkouA() + (150 * Point())) {
-
+   if (CurrentSenkouB() < CurrentSenkouA()
+         && Latest_Price.ask > CurrentSenkouB() - (150 * Point())) {
+         
       return true;
    } else if (CurrentSenkouB() > CurrentSenkouA()
-              && Latest_Price.ask < CurrentSenkouB() + (150 * Point())) {
-
+              && Latest_Price.ask < CurrentSenkouA() - (150 * Point())) {
+              
       return true;
    }
    return false;
@@ -37,16 +23,16 @@ bool IsPriceNearCloud()
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
-//| Check if buying                                                  |
+//| Check if selling                                                  |
 //+------------------------------------------------------------------+
-bool IsBuying()
+bool IsSelling()
 {
-// Check if Buy order currently exist
+// Check if Sell order currently exist
    for (int idx = 0; idx < PositionsTotal(); idx++) {
       PositionGetSymbol(idx);
 
       if (PositionGetString(POSITION_SYMBOL) == INPUT_SYMBOL
-          && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY) {
+            && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_SELL) {
          return true;
       }
    }
@@ -55,9 +41,9 @@ bool IsBuying()
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
-//| Check if Price Closed Above Cloud                                |
+//| Check if Price Closed Below Cloud                                |
 //+------------------------------------------------------------------+
-bool IsPriceClosedAboveCloud()
+bool IsPriceClosedBelowCloud()
 {
 // Get previous open price
    double prev_open[2];
@@ -67,17 +53,17 @@ bool IsPriceClosedAboveCloud()
    double prev_close[2];
    CopyClose(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 2, prev_close);
 
-// If Green cloud and Open above cloud and Closed above cloud
+// If Green cloud and Open and Closed below cloud
    if (CurrentSenkouA() > CurrentSenkouB()
-       && prev_open[0] > CurrentSenkouA()
-       && prev_close[0] > CurrentSenkouA()) {
+         && prev_open[0] < CurrentSenkouB()
+         && prev_close[0] < CurrentSenkouB()) {
       return true;
    }
 
-// If Red cloud and Open above cloud and Closed above cloud
+// If Red cloud and Open and Closed below cloud
    if (CurrentSenkouB() > CurrentSenkouA()
-       && prev_open[0] > CurrentSenkouB()
-       && prev_close[0] > CurrentSenkouB()) {
+         && prev_open[0] < CurrentSenkouA()
+         && prev_close[0] < CurrentSenkouA()) {
       return true;
    }
 
@@ -86,9 +72,9 @@ bool IsPriceClosedAboveCloud()
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
-//| Check if Chikou Above Price                                      |
+//| Check if Chikou Below Price                                      |
 //+------------------------------------------------------------------+
-bool IsChikouAbovePrice()
+bool IsChikouBelowPrice()
 {
 // Get previous open price
    double prev_open[28];
@@ -98,34 +84,35 @@ bool IsChikouAbovePrice()
    double prev_close[28];
    CopyClose(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 28, prev_close);
 
-// Chikou above bull price
+// Chikou below bull price
    if (prev_open[0] > prev_close[0]
-       && CurrentChikou() > prev_open[0]) {
+         && CurrentChikou() < prev_close[0]) {
       return true;
    }
 
-// Chikou above bear price
+// Chikou below bear price
    if (prev_close[0] > prev_open[0]
-       && CurrentChikou() > prev_close[0]) {
+         && CurrentChikou() < prev_open[0]) {
       return true;
    }
 
    return false;
 }
 //+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+
-//| Check if three falling stars                                     |
+//| Check if three rising stars                                      |
 //+------------------------------------------------------------------+
-bool IsThreeFall()
+bool IsThreeRise()
 {
 
 // Get previous low price
    double prev_close[4];
    CopyClose(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 4, prev_close);
 
-   if (prev_close[3] < prev_close[2]
-       && prev_close[2] < prev_close[1]
-       && prev_close[1] < prev_close[0]) {
+   if (prev_close[3] > prev_close[2]
+         && prev_close[2] > prev_close[1]
+         && prev_close[1] > prev_close[0]) {
       return true;
    }
    return false;
@@ -133,14 +120,14 @@ bool IsThreeFall()
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
-//| Check if Tenkan cross Kijun from Above                           |
+//| Check if Tenkan cross Kijun from Below                           |
 //+------------------------------------------------------------------+
-bool IsTenkanCrossKijunFromAbove()
+bool IsTenkanCrossKijunFromBelow()
 {
-   if (CurrentTenkan() < CurrentKijun()
-       && (CurrentTenkan(-1) > CurrentKijun(-1)
-           || CurrentTenkan(-2) > CurrentKijun(-2)
-           || CurrentTenkan(-3) > CurrentKijun(-3)
+   if (CurrentTenkan() > CurrentKijun()
+       && (CurrentTenkan(-1) < CurrentKijun(-1)
+           || CurrentTenkan(-2) < CurrentKijun(-2)
+           || CurrentTenkan(-3) < CurrentKijun(-3)
           )
       ) {
       return true;
