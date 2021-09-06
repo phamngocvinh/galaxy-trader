@@ -27,6 +27,8 @@ const int default_amount = 27;
 // Variables
 // Is send Buy notification
 bool isSendBuy = true;
+// Is send Sell notification
+bool isSendSell = true;
 // Is send Take Profit notification
 bool isSendTP = false;
 
@@ -85,6 +87,9 @@ void OnTick()
 
 // Processing Buy command
    ProcessBuy();
+
+// Processing Sell command
+   ProcessSell();
 }
 //+------------------------------------------------------------------+
 
@@ -98,6 +103,9 @@ void OnTimer()
 
 // Send Buy notification
    isSendBuy = true;
+
+// Send Sell notification
+   isSendSell = true;
 }
 //+------------------------------------------------------------------+
 
@@ -137,6 +145,53 @@ void ProcessBuy()
           || IsThreeFall()
           // If Tenkan Cross Kijun From Above
           || IsTenkanCrossKijunFromAbove()
+         ) {
+
+         isSendTP = false;
+         SendNotification("Take Profit!!!\r\n" + INPUT_SYMBOL);
+         Print("Take Profit!!!\r\n" + INPUT_SYMBOL);
+      }
+   }
+}
+//+------------------------------------------------------------------+
+
+
+//+------------------------------------------------------------------+
+//| Sell Process                                                      |
+//+------------------------------------------------------------------+
+void ProcessSell()
+{
+   if (0 == 0
+// Is Send Sell Notification
+       && isSendSell
+// If not currently selling
+       && !IsSelling()
+// If Chiukou-sen below Price
+       && IsChikouBelowPrice()
+// If Tenkan < Kijun
+       && CurrentTenkan() < CurrentKijun()
+// If Price Closed Below Cloud
+       && IsPriceClosedBelowCloud()
+// If Tick price near Cloud
+       && IsPriceNearCloud_Sell()) {
+
+      isSendSell = false;
+      SendNotification("Galaxy Sell!!!\r\n" + INPUT_SYMBOL);
+      Print("Galaxy Sell!!!\r\n" + INPUT_SYMBOL);
+   }
+
+   if (isSendTP && IsSelling()) {
+      MqlTick Latest_Price; // Structure to get the latest prices
+      SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+
+      // If Price touch Cloud
+      if (Latest_Price.ask >= CurrentSenkouB()
+          // If Cloud become Green cloud
+          || CurrentSenkouA(default_amount - 1) > CurrentSenkouB(default_amount - 1)
+          // If prev 3 closed price is going up
+          || IsThreeRise()
+          // If Tenkan Cross Kijun From Above
+          || IsTenkanCrossKijunFromBelow()
          ) {
 
          isSendTP = false;
