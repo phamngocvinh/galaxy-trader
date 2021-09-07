@@ -14,7 +14,7 @@ bool IsPriceNearCloud_Sell()
          
       return true;
    } else if (CurrentSenkouB() > CurrentSenkouA()
-              && Latest_Price.ask < CurrentSenkouA() - (150 * Point())) {
+              && Latest_Price.ask > CurrentSenkouA() - (150 * Point())) {
               
       return true;
    }
