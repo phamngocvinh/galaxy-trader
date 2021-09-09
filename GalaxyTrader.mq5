@@ -114,8 +114,6 @@ void OnTimer()
 //+------------------------------------------------------------------+
 void ProcessBuy()
 {
-   Print("Looking for Buy");
-   
    if(0 == 0
 // Is Send Buy Notification
       && isSendBuy
@@ -163,8 +161,6 @@ void ProcessBuy()
 //+------------------------------------------------------------------+
 void ProcessSell()
 {
-   Print("Looking for Sell");
-
    if(0 == 0
 // Is Send Sell Notification
       && isSendSell
