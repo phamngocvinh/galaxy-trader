@@ -148,3 +148,23 @@ bool IsTenkanCrossKijunFromAbove()
    return false;
 }
 //+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//| Check if Price going down fast                                   |
+//+------------------------------------------------------------------+
+bool IsPriceGoingDownFast()
+{
+// Get previous open price
+   double prev_open[2];
+   CopyOpen(INPUT_SYMBOL, TIMEFRAME, 0, 2, prev_open);
+
+   MqlTick Latest_Price; // Structure to get the latest prices
+   SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+
+   if (prev_open[2] - Latest_Price.ask >= POINT_FAST * Point()) {
+      return false;
+   }
+
+   return false;
+}
+//+------------------------------------------------------------------+

@@ -10,12 +10,12 @@ bool IsPriceNearCloud_Sell()
    SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
    if (CurrentSenkouB() < CurrentSenkouA()
-         && Latest_Price.ask > CurrentSenkouB() - (POINT_GAP * Point())) {
-         
+       && Latest_Price.ask > CurrentSenkouB() - (POINT_GAP * Point())) {
+
       return true;
    } else if (CurrentSenkouB() > CurrentSenkouA()
               && Latest_Price.ask > CurrentSenkouA() - (POINT_GAP * Point())) {
-              
+
       return true;
    }
    return false;
@@ -32,7 +32,7 @@ bool IsSelling()
       PositionGetSymbol(idx);
 
       if (PositionGetString(POSITION_SYMBOL) == INPUT_SYMBOL
-            && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_SELL) {
+          && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_SELL) {
          return true;
       }
    }
@@ -55,15 +55,15 @@ bool IsPriceClosedBelowCloud()
 
 // If Green cloud and Open and Closed below cloud
    if (CurrentSenkouA() > CurrentSenkouB()
-         && prev_open[0] < CurrentSenkouB()
-         && prev_close[0] < CurrentSenkouB()) {
+       && prev_open[0] < CurrentSenkouB()
+       && prev_close[0] < CurrentSenkouB()) {
       return true;
    }
 
 // If Red cloud and Open and Closed below cloud
    if (CurrentSenkouB() > CurrentSenkouA()
-         && prev_open[0] < CurrentSenkouA()
-         && prev_close[0] < CurrentSenkouA()) {
+       && prev_open[0] < CurrentSenkouA()
+       && prev_close[0] < CurrentSenkouA()) {
       return true;
    }
 
@@ -86,13 +86,13 @@ bool IsChikouBelowPrice()
 
 // Chikou below bull price
    if (prev_open[0] > prev_close[0]
-         && CurrentChikou() < prev_close[0]) {
+       && CurrentChikou() < prev_close[0]) {
       return true;
    }
 
 // Chikou below bear price
    if (prev_close[0] > prev_open[0]
-         && CurrentChikou() < prev_open[0]) {
+       && CurrentChikou() < prev_open[0]) {
       return true;
    }
 
@@ -111,8 +111,8 @@ bool IsThreeRise()
    CopyClose(INPUT_SYMBOL, TIMEFRAME, 0, 4, prev_close);
 
    if (prev_close[3] > prev_close[2]
-         && prev_close[2] > prev_close[1]
-         && prev_close[1] > prev_close[0]) {
+       && prev_close[2] > prev_close[1]
+       && prev_close[1] > prev_close[0]) {
       return true;
    }
    return false;
@@ -132,6 +132,26 @@ bool IsTenkanCrossKijunFromBelow()
       ) {
       return true;
    }
+   return false;
+}
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//| Check if Price going up fast                                   |
+//+------------------------------------------------------------------+
+bool IsPriceGoingUpFast()
+{
+// Get previous open price
+   double prev_open[2];
+   CopyOpen(INPUT_SYMBOL, TIMEFRAME, 0, 2, prev_open);
+
+   MqlTick Latest_Price; // Structure to get the latest prices
+   SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+
+   if (Latest_Price.ask - prev_open[2] >= POINT_FAST * Point()) {
+      return false;
+   }
+
    return false;
 }
 //+------------------------------------------------------------------+

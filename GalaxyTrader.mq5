@@ -12,6 +12,7 @@
 input ENUM_TIMEFRAMES TIMEFRAME = PERIOD_H4;
 input int TIMER = 60;
 input int POINT_GAP = 1000;
+input int POINT_FAST = 300;
 
 const string INPUT_SYMBOL = ChartSymbol();
 
@@ -141,6 +142,8 @@ void ProcessBuy()
          || IsThreeFall()
          // If Tenkan Cross Kijun From Above
          || IsTenkanCrossKijunFromAbove()
+         // If Price going down fast   
+         || IsPriceGoingDownFast()
         ) {
 
          isSendTP = false;
@@ -188,6 +191,8 @@ void ProcessSell()
          || IsThreeRise()
          // If Tenkan Cross Kijun From Above
          || IsTenkanCrossKijunFromBelow()
+         // If Price going up fast
+         || IsPriceGoingUpFast()
         ) {
 
          isSendTP = false;
