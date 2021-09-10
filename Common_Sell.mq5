@@ -10,11 +10,11 @@ bool IsPriceNearCloud_Sell()
    SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
    if (CurrentSenkouB() < CurrentSenkouA()
-         && Latest_Price.ask > CurrentSenkouB() - (150 * Point())) {
+         && Latest_Price.ask > CurrentSenkouB() - (POINT_GAP * Point())) {
          
       return true;
    } else if (CurrentSenkouB() > CurrentSenkouA()
-              && Latest_Price.ask > CurrentSenkouA() - (150 * Point())) {
+              && Latest_Price.ask > CurrentSenkouA() - (POINT_GAP * Point())) {
               
       return true;
    }
@@ -47,11 +47,11 @@ bool IsPriceClosedBelowCloud()
 {
 // Get previous open price
    double prev_open[2];
-   CopyOpen(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 2, prev_open);
+   CopyOpen(INPUT_SYMBOL, TIMEFRAME, 0, 2, prev_open);
 
 // Get previous close price
    double prev_close[2];
-   CopyClose(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 2, prev_close);
+   CopyClose(INPUT_SYMBOL, TIMEFRAME, 0, 2, prev_close);
 
 // If Green cloud and Open and Closed below cloud
    if (CurrentSenkouA() > CurrentSenkouB()
@@ -78,11 +78,11 @@ bool IsChikouBelowPrice()
 {
 // Get previous open price
    double prev_open[28];
-   CopyOpen(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 28, prev_open);
+   CopyOpen(INPUT_SYMBOL, TIMEFRAME, 0, 28, prev_open);
 
 // Get previous close price
    double prev_close[28];
-   CopyClose(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 28, prev_close);
+   CopyClose(INPUT_SYMBOL, TIMEFRAME, 0, 28, prev_close);
 
 // Chikou below bull price
    if (prev_open[0] > prev_close[0]
@@ -108,7 +108,7 @@ bool IsThreeRise()
 
 // Get previous low price
    double prev_close[4];
-   CopyClose(INPUT_SYMBOL, INPUT_TIMEFRAME, 0, 4, prev_close);
+   CopyClose(INPUT_SYMBOL, TIMEFRAME, 0, 4, prev_close);
 
    if (prev_close[3] > prev_close[2]
          && prev_close[2] > prev_close[1]

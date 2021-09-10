@@ -9,7 +9,10 @@
 #include "Ichimoku.mq5"
 
 // Parameters
-const ENUM_TIMEFRAMES INPUT_TIMEFRAME = PERIOD_H1;
+input ENUM_TIMEFRAMES TIMEFRAME = PERIOD_H4;
+input int TIMER = 60;
+input int POINT_GAP = 1000;
+
 const string INPUT_SYMBOL = ChartSymbol();
 
 // Ichimoku
@@ -32,12 +35,6 @@ bool isSendSell = true;
 // Is send Take Profit notification
 bool isSendTP = false;
 
-// Default timer = 10mins = 600sec
-const int default_timer = 1800;
-
-// M30 timer
-int m30Timer = 0;
-
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -46,7 +43,7 @@ int OnInit()
    SendNotification("Welcome to the Galaxy !!!\r\nSymbol: " + INPUT_SYMBOL);
 
 //--- create timer
-   EventSetTimer(default_timer);
+   EventSetTimer(TIMER * 60);
 
 // Check if valid symbol
    if(!isValidSymbol()) {
@@ -54,7 +51,7 @@ int OnInit()
    }
 
 // Initialize Ichimoku
-   Ichimoku_handle = iIchimoku(INPUT_SYMBOL, INPUT_TIMEFRAME, 9, 26, 52);
+   Ichimoku_handle = iIchimoku(INPUT_SYMBOL, TIMEFRAME, 9, 26, 52);
 
 //---
    return(INIT_SUCCEEDED);
@@ -68,7 +65,6 @@ void OnDeinit(const int reason)
 {
 //--- destroy timer
    EventKillTimer();
-
 }
 //+------------------------------------------------------------------+
 
