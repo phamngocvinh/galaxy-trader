@@ -142,7 +142,7 @@ bool IsPriceGoingUpFast()
    MqlTick Latest_Price; // Structure to get the latest prices
    SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
-   if (Latest_Price.ask - prev_open[2] >= POINT_FAST * Point()) {
+   if (Latest_Price.ask - prev_open[1] >= POINT_FAST * Point()) {
       return false;
    }
 
