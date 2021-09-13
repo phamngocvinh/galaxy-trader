@@ -59,24 +59,18 @@ bool IsBuying()
 //+------------------------------------------------------------------+
 bool IsPriceClosedAboveCloud()
 {
-// Get previous open price
-   double prev_open[2];
-   CopyOpen(INPUT_SYMBOL, TIMEFRAME, 0, 2, prev_open);
-
 // Get previous close price
    double prev_close[2];
    CopyClose(INPUT_SYMBOL, TIMEFRAME, 0, 2, prev_close);
 
 // If Green cloud and Open above cloud and Closed above cloud
    if (CurrentSenkouA() > CurrentSenkouB()
-       && prev_open[0] > CurrentSenkouA()
        && prev_close[0] > CurrentSenkouA()) {
       return true;
    }
 
 // If Red cloud and Open above cloud and Closed above cloud
    if (CurrentSenkouB() > CurrentSenkouA()
-       && prev_open[0] > CurrentSenkouB()
        && prev_close[0] > CurrentSenkouB()) {
       return true;
    }
