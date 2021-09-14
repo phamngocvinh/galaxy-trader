@@ -10,6 +10,7 @@
 
 // Parameters
 input ENUM_TIMEFRAMES TIMEFRAME = PERIOD_H4;
+input ENUM_TIMEFRAMES TP_TIMEFRAME = PERIOD_H1;
 input int TIMER = 60;
 input int POINT_GAP = 1000;
 input int POINT_FAST = 300;
@@ -23,6 +24,7 @@ double Senkou_Span_A_Buffer[];
 double Senkou_Span_B_Buffer[];
 double Chikou_Span_Buffer[];
 int Ichimoku_handle;
+int TP_Ichimoku_handle;
 // Number of copied values
 const int amount = 30;
 // Default number of copied values
@@ -54,6 +56,9 @@ int OnInit()
 // Initialize Ichimoku
    Ichimoku_handle = iIchimoku(INPUT_SYMBOL, TIMEFRAME, 9, 26, 52);
 
+// Initialize TP Ichimoku
+   TP_Ichimoku_handle = iIchimoku(INPUT_SYMBOL, TP_TIMEFRAME, 9, 26, 52);
+
 //---
    return(INIT_SUCCEEDED);
 }
@@ -84,6 +89,14 @@ void OnTick()
 
 // Processing Buy command
    ProcessBuy();
+   
+// Get ichimoku values
+   FillArraysFromBuffers(Tenkan_sen_Buffer,
+                         Kijun_sen_Buffer,
+                         Senkou_Span_A_Buffer,
+                         Senkou_Span_B_Buffer,
+                         Chikou_Span_Buffer,
+                         Ichimoku_handle);
 
 // Processing Sell command
    ProcessSell();
@@ -129,6 +142,14 @@ void ProcessBuy()
       SendNotification("Buy: " + INPUT_SYMBOL);
       Print("Galaxy Buy!!!\r\n" + INPUT_SYMBOL);
    }
+
+// Get ichimoku values
+   FillArraysFromBuffers(Tenkan_sen_Buffer,
+                         Kijun_sen_Buffer,
+                         Senkou_Span_A_Buffer,
+                         Senkou_Span_B_Buffer,
+                         Chikou_Span_Buffer,
+                         TP_Ichimoku_handle);
 
    if(isSendTP && IsBuying()) {
       MqlTick Latest_Price; // Structure to get the latest prices
@@ -178,6 +199,14 @@ void ProcessSell()
       SendNotification("Sell: " + INPUT_SYMBOL);
       Print("Galaxy Sell!!!\r\n" + INPUT_SYMBOL);
    }
+
+// Get ichimoku values
+   FillArraysFromBuffers(Tenkan_sen_Buffer,
+                         Kijun_sen_Buffer,
+                         Senkou_Span_A_Buffer,
+                         Senkou_Span_B_Buffer,
+                         Chikou_Span_Buffer,
+                         TP_Ichimoku_handle);
 
    if(isSendTP && IsSelling()) {
       MqlTick Latest_Price; // Structure to get the latest prices
