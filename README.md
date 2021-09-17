@@ -167,7 +167,7 @@ Project Link: [https://github.com/phamngocvinh/galaxy-trader](https://github.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[download-shield]: https://img.shields.io/github/downloads/phamngocvinh/galaxy-trader/total?color=Green&style=for-the-badge
+[download-shield]: https://img.shields.io/github/downloads/phamngocvinh/galaxy-trader/total?color=green&style=for-the-badge
 [download-url]: https://github.com/phamngocvinh/galaxy-trader/releases/latest
 [release-shield]: https://img.shields.io/github/v/release/phamngocvinh/galaxy-trader?style=for-the-badge
 [release-url]: https://github.com/phamngocvinh/galaxy-trader/releases/latest
