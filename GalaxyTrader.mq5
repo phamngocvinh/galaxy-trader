@@ -15,6 +15,7 @@ input int TIMER = 60;
 input int POINT_GAP = 1000;
 input int POINT_FAST = 300;
 input double TP_POINT = 200;
+input int MAX_TRADE = 3;
 
 const string INPUT_SYMBOL = ChartSymbol();
 
@@ -137,7 +138,9 @@ void ProcessBuy()
 // If Price Closed Above Cloud
       && IsPriceClosedAboveCloud()
 // If Tick price near Cloud
-      && IsPriceNearCloud()) {
+      && IsPriceNearCloud()
+// If Max Trade not Reach
+      && IsMaxTrade()) {
 
       isSendBuy = false;
       SendNotification("Buy: " + INPUT_SYMBOL);
@@ -196,7 +199,9 @@ void ProcessSell()
 // If Price Closed Below Cloud
       && IsPriceClosedBelowCloud()
 // If Tick price near Cloud
-      && IsPriceNearCloud_Sell()) {
+      && IsPriceNearCloud_Sell()
+// If Max Trade not Reach
+      && IsMaxTrade()) {
 
       isSendSell = false;
       SendNotification("Sell: " + INPUT_SYMBOL);
