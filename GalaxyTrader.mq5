@@ -90,7 +90,7 @@ void OnTick()
 
 // Processing Buy command
    ProcessBuy();
-   
+
 // Get ichimoku values
    FillArraysFromBuffers(Tenkan_sen_Buffer,
                          Kijun_sen_Buffer,
@@ -128,8 +128,8 @@ void ProcessBuy()
    if(0 == 0
 // Is Send Buy Notification
       && isSendBuy
-// If not currently buying
-      && !IsBuying()
+// If currently not trading
+      && !IsSelling() && !IsBuying()
 // If Chiukou-sen above Price
       && IsChikouAbovePrice()
 // If Tenkan > Kijun
@@ -164,7 +164,7 @@ void ProcessBuy()
          || IsThreeFall()
          // If Tenkan Cross Kijun From Above
          || IsTenkanCrossKijunFromAbove()
-         // If Price going down fast   
+         // If Price going down fast
          || IsPriceGoingDownFast()
          // If profit
          || IsProfit()
@@ -187,8 +187,8 @@ void ProcessSell()
    if(0 == 0
 // Is Send Sell Notification
       && isSendSell
-// If not currently selling
-      && !IsSelling()
+// If currently not trading
+      && !IsSelling() && !IsBuying()
 // If Chiukou-sen below Price
       && IsChikouBelowPrice()
 // If Tenkan < Kijun
