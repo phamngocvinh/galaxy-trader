@@ -55,6 +55,28 @@ bool IsBuying()
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
+//| Check if profit                                                  |
+//+------------------------------------------------------------------+
+bool IsProfit()
+{
+   MqlTick Latest_Price; // Structure to get the latest prices
+   SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+
+// Check if Buy order currently exist
+   for (int idx = 0; idx < PositionsTotal(); idx++) {
+      PositionGetSymbol(idx);
+
+      if (PositionGetString(POSITION_SYMBOL) == INPUT_SYMBOL
+          && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY
+          && PositionGetDouble(POSITION_PRICE_CURRENT) - PositionGetDouble(POSITION_PRICE_OPEN) >= TP_POINT) {
+         return true;
+      }
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
 //| Check if Price Closed Above Cloud                                |
 //+------------------------------------------------------------------+
 bool IsPriceClosedAboveCloud()

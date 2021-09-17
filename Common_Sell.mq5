@@ -41,6 +41,29 @@ bool IsSelling()
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
+//| Check if selling                                                  |
+//+------------------------------------------------------------------+
+bool IsProfit_Sell()
+{
+   MqlTick Latest_Price; // Structure to get the latest prices
+   SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+
+// Check if Sell order currently exist
+   for (int idx = 0; idx < PositionsTotal(); idx++) {
+      PositionGetSymbol(idx);
+
+      if (PositionGetString(POSITION_SYMBOL) == INPUT_SYMBOL
+          && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_SELL
+          && PositionGetDouble(POSITION_PRICE_OPEN) - PositionGetDouble(POSITION_PRICE_CURRENT) >= TP_POINT) {
+
+         return true;
+      }
+   }
+   return false;
+}
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
 //| Check if Price Closed Below Cloud                                |
 //+------------------------------------------------------------------+
 bool IsPriceClosedBelowCloud()
@@ -148,4 +171,8 @@ bool IsPriceGoingUpFast()
 
    return false;
 }
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+
