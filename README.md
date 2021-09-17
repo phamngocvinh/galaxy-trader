@@ -173,7 +173,7 @@ Project Link: [https://github.com/phamngocvinh/galaxy-trader](https://github.com
 [release-url]: https://github.com/phamngocvinh/galaxy-trader/releases/latest
 [issues-shield]: https://img.shields.io/github/issues/phamngocvinh/galaxy-trader?style=for-the-badge
 [issues-url]: https://github.com/phamngocvinh/galaxy-trader/issues
-[license-shield]: https://img.shields.io/github/license/phamngocvinh/galaxy-trader?color=red&style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/phamngocvinh/galaxy-trader?style=for-the-badge
 [license-url]: https://github.com/phamngocvinh/galaxy-trader/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/phamngocvinh
