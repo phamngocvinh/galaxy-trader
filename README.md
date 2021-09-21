@@ -20,13 +20,13 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
+<h3 align="center">
+
 [![Download][download-shield]][download-url]
 [![Release][release-shield]][release-url]
 [![Issues][issues-shield]][issues-url]
 [![License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
+</h3>
 
 <!-- PROJECT LOGO -->
 <br />
@@ -149,7 +149,8 @@ Distributed under the GPL-3.0 License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Pham Ngoc Vinh - phamngocvinh@live.com
+[![Mail][mail-shield]][mail-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 Project Link: [https://github.com/phamngocvinh/galaxy-trader](https://github.com/phamngocvinh/galaxy-trader)
 
@@ -175,6 +176,8 @@ Project Link: [https://github.com/phamngocvinh/galaxy-trader](https://github.com
 [issues-url]: https://github.com/phamngocvinh/galaxy-trader/issues
 [license-shield]: https://img.shields.io/github/license/phamngocvinh/galaxy-trader?style=for-the-badge
 [license-url]: https://github.com/phamngocvinh/galaxy-trader/blob/master/LICENSE
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/phamngocvinh
+[linkedin-shield]: https://img.shields.io/badge/linkedin-blue?style=for-the-badge&logo=linkedin
+[linkedin-url]: https://www.linkedin.com/in/vinh-pham-ngoc-158785220
+[mail-shield]: https://img.shields.io/badge/Gmail-white?style=for-the-badge&logo=gmail
+[mail-url]: mailto:phamngocvinh@live.com
 [product-screenshot]: images/screenshot.jpg
