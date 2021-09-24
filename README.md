@@ -16,7 +16,7 @@
   <h3 align="center">Galaxy Trader</h3>
 
   <p align="center">
-    MetaTrader 5 Trend Catcher EA
+    :chart: MetaTrader 5 Trend Catcher EA
     <br />
     <a href="https://github.com/phamngocvinh/galaxy-trader"><strong>Explore the docs »</strong></a>
     <br />
