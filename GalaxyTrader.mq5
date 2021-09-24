@@ -18,6 +18,7 @@ input double TP_POINT = 200;
 input int MAX_TRADE = 3;
 
 const string INPUT_SYMBOL = ChartSymbol();
+const string VERSION = "v0.2.1";
 
 // Ichimoku
 double Tenkan_sen_Buffer[];
@@ -45,7 +46,7 @@ bool isSendTP = false;
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   SendNotification("Welcome to the Galaxy !!!\r\nSymbol: " + INPUT_SYMBOL);
+   SendNotification("Welcome to the Galaxy " + VERSION + "\r\nSymbol: " + INPUT_SYMBOL);
 
 //--- create timer
    EventSetTimer(TIMER * 60);
