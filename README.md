@@ -46,6 +46,7 @@
         <li><a href="#build">Build</a></li>
       </ul>
     </li>
+    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -86,6 +87,9 @@ To get a local copy up and running follow these simple steps.
    git clone https://github.com/phamngocvinh/galaxy-trader.git
    ```
 2. Open `GalaxyTrader.mqproj` with MetaEditor
+
+<!-- Usage -->
+## :man_teacher: Usage
 
 <!-- ROADMAP -->
 ## :world_map: Roadmap
