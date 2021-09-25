@@ -52,9 +52,12 @@ bool IsProfit_Sell()
    for (int idx = 0; idx < PositionsTotal(); idx++) {
       PositionGetSymbol(idx);
 
+      double openPrice = PositionGetDouble(POSITION_PRICE_OPEN);
+      double point = Point();
+
       if (PositionGetString(POSITION_SYMBOL) == INPUT_SYMBOL
           && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_SELL
-          && PositionGetDouble(POSITION_PRICE_OPEN) - Latest_Price.ask >= 10) {
+          && openPrice - Latest_Price.ask >= 20 * point) {
 
          return true;
       }

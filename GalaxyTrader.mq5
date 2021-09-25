@@ -8,6 +8,7 @@
 #include "Common_Buy.mq5"
 #include "Common_Sell.mq5"
 #include "Ichimoku.mq5"
+#include <Trade\Trade.mqh>
 
 // Constants
 // Symbol
@@ -19,22 +20,24 @@ const int AMOUNT = 30;
 // Default number of copied values
 const int DEFAULT_AMOUNT = 27;
 
+// Check timer
+const int TIMER = 60; // Default 1 minute
+
 // Parameters
 // Entry Timeframe
-input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_1 = PERIOD_M30;
-input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_2 = PERIOD_H1;
-input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_3 = PERIOD_H4;
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_1 = PERIOD_M30;// Entry TimeFrame 1
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_2 = PERIOD_H1;// Entry TimeFrame 2
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_3 = PERIOD_H4;// Entry TimeFrame 3
 
 // TP Timeframe
-input ENUM_TIMEFRAMES TP_TIMEFRAME_1 = PERIOD_M15;
-input ENUM_TIMEFRAMES TP_TIMEFRAME_2 = PERIOD_M30;
-input ENUM_TIMEFRAMES TP_TIMEFRAME_3 = PERIOD_H1;
+input ENUM_TIMEFRAMES TP_TIMEFRAME_1 = PERIOD_M15;// Take Profit TimeFrame 1
+input ENUM_TIMEFRAMES TP_TIMEFRAME_2 = PERIOD_M30;// Take Profit TimeFrame 2
+input ENUM_TIMEFRAMES TP_TIMEFRAME_3 = PERIOD_H1;// Take Profit TimeFrame 3
 
-// Check timer
-input int TIMER = 60; // Default 1 minute
+// Point Gap
+input int POINT_GAP = 500; // Range between cloud and price
 
-input int POINT_GAP = 1000;////////////////
-
+// Variables
 // Ichimoku
 double Tenkan_Sen_Buffer[];
 double Kijun_Sen_Buffer[];
@@ -67,6 +70,11 @@ bool isSendTP_1 = false;
 bool isSendTP_2 = false;
 bool isSendTP_3 = false;
 
+// Is Debug Mode
+const bool isDebug = false;
+CTrade cTrade;
+CPositionInfo cPosition;
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -90,7 +98,6 @@ int OnInit()
    Ichimoku_Handle_TP_2 = iIchimoku(INPUT_SYMBOL, TP_TIMEFRAME_2, 9, 26, 52);
    Ichimoku_Handle_TP_3 = iIchimoku(INPUT_SYMBOL, TP_TIMEFRAME_3, 9, 26, 52);
 
-//---
    return(INIT_SUCCEEDED);
 }
 //+------------------------------------------------------------------+
@@ -127,7 +134,7 @@ void OnTick()
 //+------------------------------------------------------------------+
 void OnTimer()
 {
-   // Count timer
+// Count timer
    Timer_Entry_1 += TIMER;
    Timer_Entry_2 += TIMER;
    Timer_Entry_3 += TIMER;
@@ -172,8 +179,8 @@ void OnTimer()
 //+------------------------------------------------------------------+
 void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, int handle_entry, int handle_tp)
 {
-   string stringTF = EnumToString(timeframe);
-   string shortTimeframe = StringReplace(stringTF, "PERIOD_", "");
+   string strTimeFrame = EnumToString(timeframe);
+   StringReplace(strTimeFrame, "PERIOD_", "");
 
 // Get ichimoku values
    FillArraysFromBuffers(Tenkan_Sen_Buffer,
@@ -198,7 +205,12 @@ void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, in
       && IsPriceNearCloud()) {
 
       isSendEntry = false;
-      SendNotification(shortTimeframe + " - Buy: " + INPUT_SYMBOL);
+      SendNotification(strTimeFrame + " - Buy: " + INPUT_SYMBOL);
+
+      if (isDebug) {
+         cTrade.Buy(0.02, NULL, 0.0, 0.0, 0.0);
+         Print(strTimeFrame + " - Buy: " + INPUT_SYMBOL);
+      }
    }
 
 // Get ichimoku values
@@ -224,7 +236,13 @@ void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, in
         ) {
 
          isSendTP = false;
-         SendNotification(shortTimeframe + " - Take Profit: " + INPUT_SYMBOL);
+         SendNotification(strTimeFrame + " - Take Profit: " + INPUT_SYMBOL);
+
+         if (isDebug) {
+            cPosition.SelectByIndex(0);
+            cTrade.PositionClose(cPosition.Ticket());
+            Print(strTimeFrame + " - Take Profit: " + INPUT_SYMBOL);
+         }
       }
    }
 }
@@ -236,8 +254,8 @@ void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, in
 //+------------------------------------------------------------------+
 void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, int handle_entry, int handle_tp)
 {
-   string stringTF = EnumToString(timeframe);
-   string shortTimeframe = StringReplace(stringTF, "PERIOD_", "");
+   string strTimeFrame = EnumToString(timeframe);
+   StringReplace(strTimeFrame, "PERIOD_", "");
 
 // Get ichimoku values
    FillArraysFromBuffers(Tenkan_Sen_Buffer,
@@ -262,7 +280,12 @@ void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, i
       && IsPriceNearCloud_Sell()) {
 
       isSendEntry = false;
-      SendNotification(shortTimeframe + " - Sell: " + INPUT_SYMBOL);
+      SendNotification(strTimeFrame + " - Sell: " + INPUT_SYMBOL);
+
+      if (isDebug) {
+         cTrade.Sell(0.02, NULL, 0.0, 0.0, 0.0);
+         Print(strTimeFrame + " - Sell: " + INPUT_SYMBOL);
+      }
    }
 
 // Get ichimoku values
@@ -288,7 +311,13 @@ void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, i
         ) {
 
          isSendTP = false;
-         SendNotification(shortTimeframe + " - Take Profit: " + INPUT_SYMBOL);
+         SendNotification(strTimeFrame + " - Take Profit: " + INPUT_SYMBOL);
+
+         if (isDebug) {
+            cPosition.SelectByIndex(0);
+            cTrade.PositionClose(cPosition.Ticket());
+            Print(strTimeFrame + " - Take Profit: " + INPUT_SYMBOL);
+         }
       }
    }
 }
