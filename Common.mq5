@@ -1,6 +1,27 @@
 //+------------------------------------------------------------------+
-//| Common Function                                                  |
+//| Get Timeframe Second                                             |
 //+------------------------------------------------------------------+
+int getTimeframeSecond (ENUM_TIMEFRAMES timeframe)
+{
+   if (PERIOD_M1 == timeframe) {
+      return 60;
+   } else if (PERIOD_M5 == timeframe) {
+      return 300;
+   } else if (PERIOD_M15 == timeframe) {
+      return 900;
+   } else if (PERIOD_M30 == timeframe) {
+      return 1800;
+   } else if (PERIOD_H1 == timeframe) {
+      return 3600;
+   } else if (PERIOD_H4 == timeframe) {
+      return 14400;
+   } else if (PERIOD_D1 == timeframe) {
+      return 43200;
+   }
+   return 0;
+}
+//+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+
 //| Check if valid symbol                                            |
 //+------------------------------------------------------------------+
@@ -14,182 +35,4 @@ bool isValidSymbol ()
    return true;
 }
 //+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//| Check if current price is near cloud                             |
-//+------------------------------------------------------------------+
-bool IsPriceNearCloud()
-{
-   MqlTick Latest_Price; // Structure to get the latest prices
-   SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-
-   if (CurrentSenkouA() > CurrentSenkouB()
-       && Latest_Price.ask < CurrentSenkouA() + (POINT_GAP * Point())) {
-
-      return true;
-   } else if (CurrentSenkouB() > CurrentSenkouA()
-              && Latest_Price.ask < CurrentSenkouB() + (POINT_GAP * Point())) {
-
-      return true;
-   }
-   return false;
-}
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//| Check if buying                                                  |
-//+------------------------------------------------------------------+
-bool IsBuying()
-{
-// Check if Buy order currently exist
-   for (int idx = 0; idx < PositionsTotal(); idx++) {
-      PositionGetSymbol(idx);
-
-      if (PositionGetString(POSITION_SYMBOL) == INPUT_SYMBOL
-          && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY) {
-         return true;
-      }
-   }
-   return false;
-}
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//| Check if profit                                                  |
-//+------------------------------------------------------------------+
-bool IsProfit()
-{
-   MqlTick Latest_Price; // Structure to get the latest prices
-   SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-
-// Check if Buy order currently exist
-   for (int idx = 0; idx < PositionsTotal(); idx++) {
-      PositionGetSymbol(idx);
-
-      if (PositionGetString(POSITION_SYMBOL) == INPUT_SYMBOL
-          && PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY
-          && PositionGetDouble(POSITION_PRICE_CURRENT) - PositionGetDouble(POSITION_PRICE_OPEN) >= TP_POINT) {
-         return true;
-      }
-   }
-   return false;
-}
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//| Check if Price Closed Above Cloud                                |
-//+------------------------------------------------------------------+
-bool IsPriceClosedAboveCloud()
-{
-// Get previous close price
-   double prev_close[2];
-   CopyClose(INPUT_SYMBOL, TIMEFRAME, 0, 2, prev_close);
-
-// If Green cloud and Open above cloud and Closed above cloud
-   if (CurrentSenkouA() > CurrentSenkouB()
-       && prev_close[0] > CurrentSenkouA()) {
-      return true;
-   }
-
-// If Red cloud and Open above cloud and Closed above cloud
-   if (CurrentSenkouB() > CurrentSenkouA()
-       && prev_close[0] > CurrentSenkouB()) {
-      return true;
-   }
-
-   return false;
-}
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//| Check if Chikou Above Price                                      |
-//+------------------------------------------------------------------+
-bool IsChikouAbovePrice()
-{
-// Get previous open price
-   double prev_open[28];
-   CopyOpen(INPUT_SYMBOL, TIMEFRAME, 0, 28, prev_open);
-
-// Get previous close price
-   double prev_close[28];
-   CopyClose(INPUT_SYMBOL, TIMEFRAME, 0, 28, prev_close);
-
-// Chikou above bull price
-   if (prev_open[0] > prev_close[0]
-       && CurrentChikou() > prev_open[0]) {
-      return true;
-   }
-
-// Chikou above bear price
-   if (prev_close[0] > prev_open[0]
-       && CurrentChikou() > prev_close[0]) {
-      return true;
-   }
-
-   return false;
-}
-//+------------------------------------------------------------------+
-//+------------------------------------------------------------------+
-//| Check if three falling stars                                     |
-//+------------------------------------------------------------------+
-bool IsThreeFall()
-{
-
-// Get previous low price
-   double prev_close[4];
-   CopyClose(INPUT_SYMBOL, TIMEFRAME, 0, 4, prev_close);
-
-   if (prev_close[3] < prev_close[2]
-       && prev_close[2] < prev_close[1]
-       && prev_close[1] < prev_close[0]) {
-      return true;
-   }
-   return false;
-}
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//| Check if Tenkan cross Kijun from Above                           |
-//+------------------------------------------------------------------+
-bool IsTenkanCrossKijunFromAbove()
-{
-   if (CurrentTenkan() < CurrentKijun()
-       && (CurrentTenkan(-1) > CurrentKijun(-1)
-           || CurrentTenkan(-2) > CurrentKijun(-2)
-           || CurrentTenkan(-3) > CurrentKijun(-3)
-          )
-      ) {
-      return true;
-   }
-   return false;
-}
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//| Check if Price going down fast                                   |
-//+------------------------------------------------------------------+
-bool IsPriceGoingDownFast()
-{
-// Get previous open price
-   double prev_open[2];
-   CopyOpen(INPUT_SYMBOL, TIMEFRAME, 0, 2, prev_open);
-
-   MqlTick Latest_Price; // Structure to get the latest prices
-   SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
-
-   if (prev_open[1] - Latest_Price.ask >= POINT_FAST * Point()) {
-      return false;
-   }
-
-   return false;
-}
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//| Check if Trading Number Reach Maximun                            |
-//+------------------------------------------------------------------+
-bool IsMaxTrade()
-{
-   return PositionsTotal() == MAX_TRADE;
-}
 //+------------------------------------------------------------------+

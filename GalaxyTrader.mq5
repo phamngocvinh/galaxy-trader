@@ -1,55 +1,81 @@
 //+------------------------------------------------------------------+
 //|                                                 GalaxyTrader.mq5 |
+//|                                                      Version 0.3 |
 //|                                   Copyright 2021, Pham Ngoc Vinh |
-//|                                                                  |
 //+------------------------------------------------------------------+
 // Include
 #include "Common.mq5"
+#include "Common_Buy.mq5"
 #include "Common_Sell.mq5"
 #include "Ichimoku.mq5"
 
-// Parameters
-input ENUM_TIMEFRAMES TIMEFRAME = PERIOD_H4;
-input ENUM_TIMEFRAMES TP_TIMEFRAME = PERIOD_H1;
-input int TIMER = 60;
-input int POINT_GAP = 1000;
-input int POINT_FAST = 300;
-input double TP_POINT = 200;
-input int MAX_TRADE = 3;
-
+// Constants
+// Symbol
 const string INPUT_SYMBOL = ChartSymbol();
-const string VERSION = "v0.2.1";
+// Version
+const string VERSION = "v0.3";
+// Number of copied values
+const int AMOUNT = 30;
+// Default number of copied values
+const int DEFAULT_AMOUNT = 27;
+
+// Parameters
+// Entry Timeframe
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_1 = PERIOD_M30;
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_2 = PERIOD_H1;
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_3 = PERIOD_H4;
+
+// TP Timeframe
+input ENUM_TIMEFRAMES TP_TIMEFRAME_1 = PERIOD_M15;
+input ENUM_TIMEFRAMES TP_TIMEFRAME_2 = PERIOD_M30;
+input ENUM_TIMEFRAMES TP_TIMEFRAME_3 = PERIOD_H1;
+
+// Check timer
+input int TIMER = 60; // Default 1 minute
+
+input int POINT_GAP = 1000;////////////////
 
 // Ichimoku
-double Tenkan_sen_Buffer[];
-double Kijun_sen_Buffer[];
+double Tenkan_Sen_Buffer[];
+double Kijun_Sen_Buffer[];
 double Senkou_Span_A_Buffer[];
 double Senkou_Span_B_Buffer[];
 double Chikou_Span_Buffer[];
-int Ichimoku_handle;
-int TP_Ichimoku_handle;
-// Number of copied values
-const int amount = 30;
-// Default number of copied values
-const int default_amount = 27;
 
-// Variables
-// Is send Buy notification
-bool isSendBuy = true;
-// Is send Sell notification
-bool isSendSell = true;
-// Is send Take Profit notification
-bool isSendTP = false;
+// Ichimoku Handles
+int Ichimoku_Handle_ET_1;
+int Ichimoku_Handle_ET_2;
+int Ichimoku_Handle_ET_3;
+int Ichimoku_Handle_TP_1;
+int Ichimoku_Handle_TP_2;
+int Ichimoku_Handle_TP_3;
+
+// Timer Counter
+int Timer_Entry_1 = 0;
+int Timer_Entry_2 = 0;
+int Timer_Entry_3 = 0;
+
+int Timer_TP_1 = 0;
+int Timer_TP_2 = 0;
+int Timer_TP_3 = 0;
+
+// Send Notification Flag
+bool isSendEntry_1 = false;
+bool isSendEntry_2 = false;
+bool isSendEntry_3 = false;
+bool isSendTP_1 = false;
+bool isSendTP_2 = false;
+bool isSendTP_3 = false;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   SendNotification("Welcome to the Galaxy " + VERSION + "\r\nSymbol: " + INPUT_SYMBOL);
+   SendNotification("Welcome to Galaxy Trader " + VERSION + "\r\nSymbol: " + INPUT_SYMBOL);
 
 //--- create timer
-   EventSetTimer(TIMER * 60);
+   EventSetTimer(TIMER); // Second to Minute
 
 // Check if valid symbol
    if(!isValidSymbol()) {
@@ -57,10 +83,12 @@ int OnInit()
    }
 
 // Initialize Ichimoku
-   Ichimoku_handle = iIchimoku(INPUT_SYMBOL, TIMEFRAME, 9, 26, 52);
-
-// Initialize TP Ichimoku
-   TP_Ichimoku_handle = iIchimoku(INPUT_SYMBOL, TP_TIMEFRAME, 9, 26, 52);
+   Ichimoku_Handle_ET_1 = iIchimoku(INPUT_SYMBOL, ENTRY_TIMEFRAME_1, 9, 26, 52);
+   Ichimoku_Handle_ET_2 = iIchimoku(INPUT_SYMBOL, ENTRY_TIMEFRAME_2, 9, 26, 52);
+   Ichimoku_Handle_ET_3 = iIchimoku(INPUT_SYMBOL, ENTRY_TIMEFRAME_3, 9, 26, 52);
+   Ichimoku_Handle_TP_1 = iIchimoku(INPUT_SYMBOL, TP_TIMEFRAME_1, 9, 26, 52);
+   Ichimoku_Handle_TP_2 = iIchimoku(INPUT_SYMBOL, TP_TIMEFRAME_2, 9, 26, 52);
+   Ichimoku_Handle_TP_3 = iIchimoku(INPUT_SYMBOL, TP_TIMEFRAME_3, 9, 26, 52);
 
 //---
    return(INIT_SUCCEEDED);
@@ -82,27 +110,15 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
-// Get ichimoku values
-   FillArraysFromBuffers(Tenkan_sen_Buffer,
-                         Kijun_sen_Buffer,
-                         Senkou_Span_A_Buffer,
-                         Senkou_Span_B_Buffer,
-                         Chikou_Span_Buffer,
-                         Ichimoku_handle);
-
-// Processing Buy command
-   ProcessBuy();
-
-// Get ichimoku values
-   FillArraysFromBuffers(Tenkan_sen_Buffer,
-                         Kijun_sen_Buffer,
-                         Senkou_Span_A_Buffer,
-                         Senkou_Span_B_Buffer,
-                         Chikou_Span_Buffer,
-                         Ichimoku_handle);
+// Process Buy Order
+   ProcessBuy(isSendEntry_1, isSendTP_1, ENTRY_TIMEFRAME_1, Ichimoku_Handle_ET_1, Ichimoku_Handle_TP_1);
+   ProcessBuy(isSendEntry_2, isSendTP_2, ENTRY_TIMEFRAME_2, Ichimoku_Handle_ET_2, Ichimoku_Handle_TP_2);
+   ProcessBuy(isSendEntry_3, isSendTP_3, ENTRY_TIMEFRAME_3, Ichimoku_Handle_ET_3, Ichimoku_Handle_TP_3);
 
 // Processing Sell command
-   ProcessSell();
+   ProcessSell(isSendEntry_1, isSendTP_1, ENTRY_TIMEFRAME_1, Ichimoku_Handle_ET_1, Ichimoku_Handle_TP_1);
+   ProcessSell(isSendEntry_2, isSendTP_2, ENTRY_TIMEFRAME_2, Ichimoku_Handle_ET_2, Ichimoku_Handle_TP_2);
+   ProcessSell(isSendEntry_3, isSendTP_3, ENTRY_TIMEFRAME_3, Ichimoku_Handle_ET_3, Ichimoku_Handle_TP_3);
 }
 //+------------------------------------------------------------------+
 
@@ -111,74 +127,104 @@ void OnTick()
 //+------------------------------------------------------------------+
 void OnTimer()
 {
-// Send TP Notification
-   isSendTP = true;
+   // Count timer
+   Timer_Entry_1 += TIMER;
+   Timer_Entry_2 += TIMER;
+   Timer_Entry_3 += TIMER;
+   Timer_TP_1 += TIMER;
+   Timer_TP_2 += TIMER;
+   Timer_TP_3 += TIMER;
 
-// Send Buy notification
-   isSendBuy = true;
+   if (Timer_Entry_1 == getTimeframeSecond(ENTRY_TIMEFRAME_1)) {
+      isSendEntry_1 = true;
+      Timer_Entry_1 = 0;
+   }
 
-// Send Sell notification
-   isSendSell = true;
+   if (Timer_Entry_2 == getTimeframeSecond(ENTRY_TIMEFRAME_2)) {
+      isSendEntry_2 = true;
+      Timer_Entry_2 = 0;
+   }
+
+   if (Timer_Entry_3 == getTimeframeSecond(ENTRY_TIMEFRAME_3)) {
+      isSendEntry_3 = true;
+      Timer_Entry_3 = 0;
+   }
+
+   if (Timer_TP_1 == getTimeframeSecond(TP_TIMEFRAME_1)) {
+      isSendTP_1 = true;
+      Timer_TP_1 = 0;
+   }
+
+   if (Timer_TP_2 == getTimeframeSecond(TP_TIMEFRAME_2)) {
+      isSendTP_2 = true;
+      Timer_TP_2 = 0;
+   }
+
+   if (Timer_TP_3 == getTimeframeSecond(TP_TIMEFRAME_3)) {
+      isSendTP_3 = true;
+      Timer_TP_3 = 0;
+   }
 }
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
 //| Buy Process                                                      |
 //+------------------------------------------------------------------+
-void ProcessBuy()
+void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, int handle_entry, int handle_tp)
 {
-   if(0 == 0
-// Is Send Buy Notification
-         && isSendBuy
-// If currently not trading
-         && !IsSelling() && !IsBuying()
-// If Chiukou-sen above Price
-         && IsChikouAbovePrice()
-// If Tenkan > Kijun
-         && CurrentTenkan() > CurrentKijun()
-// If Price Closed Above Cloud
-         && IsPriceClosedAboveCloud()
-// If Tick price near Cloud
-         && IsPriceNearCloud()
-// If Max Trade not Reach
-         && IsMaxTrade()) {
-
-      isSendBuy = false;
-      SendNotification("Buy: " + INPUT_SYMBOL);
-      Print("Galaxy Buy!!!\r\n" + INPUT_SYMBOL);
-   }
+   string stringTF = EnumToString(timeframe);
+   string shortTimeframe = StringReplace(stringTF, "PERIOD_", "");
 
 // Get ichimoku values
-   FillArraysFromBuffers(Tenkan_sen_Buffer,
-                         Kijun_sen_Buffer,
+   FillArraysFromBuffers(Tenkan_Sen_Buffer,
+                         Kijun_Sen_Buffer,
                          Senkou_Span_A_Buffer,
                          Senkou_Span_B_Buffer,
                          Chikou_Span_Buffer,
-                         TP_Ichimoku_handle);
+                         handle_entry);
 
-   if(isSendTP && IsBuying()) {
+   if(0 == 0
+// Is Send Entry Notification
+      && isSendEntry
+// If currently not trading
+      && !IsSelling() && !IsBuying()
+// If Chiukou-sen above Price
+      && IsChikouAbovePrice(timeframe)
+// If Tenkan > Kijun
+      && CurrentTenkan() > CurrentKijun()
+// If Price Closed Above Cloud
+      && IsPriceClosedAboveCloud(timeframe)
+// If Tick price near Cloud
+      && IsPriceNearCloud()) {
+
+      isSendEntry = false;
+      SendNotification(shortTimeframe + " - Buy: " + INPUT_SYMBOL);
+   }
+
+// Get ichimoku values
+   FillArraysFromBuffers(Tenkan_Sen_Buffer,
+                         Kijun_Sen_Buffer,
+                         Senkou_Span_A_Buffer,
+                         Senkou_Span_B_Buffer,
+                         Chikou_Span_Buffer,
+                         handle_tp);
+
+   if(isSendTP && IsBuying() && IsProfit()) {
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
-      // If profit
-      if (IsProfit()) {
+      // If Price touch Cloud
+      if(Latest_Price.ask <= CurrentSenkouA()
+         // If Cloud become Red cloud
+         || CurrentSenkouA(DEFAULT_AMOUNT - 1) < CurrentSenkouB(DEFAULT_AMOUNT - 1)
+         // If prev 3 closed price is going down
+         || IsThreeFall(timeframe)
+         // If Tenkan Cross Kijun From Above
+         || IsTenkanCrossKijunFromAbove()
+        ) {
 
-         // If Price touch Cloud
-         if(Latest_Price.ask <= CurrentSenkouA()
-               // If Cloud become Red cloud
-               || CurrentSenkouA(default_amount - 1) < CurrentSenkouB(default_amount - 1)
-               // If prev 3 closed price is going down
-               || IsThreeFall()
-               // If Tenkan Cross Kijun From Above
-               || IsTenkanCrossKijunFromAbove()
-               // If Price going down fast
-               || IsPriceGoingDownFast()
-           ) {
-
-            isSendTP = false;
-            SendNotification("Take Profit: " + INPUT_SYMBOL);
-            Print("Take Profit!!!\r\n" + INPUT_SYMBOL);
-         }
+         isSendTP = false;
+         SendNotification(shortTimeframe + " - Take Profit: " + INPUT_SYMBOL);
       }
    }
 }
@@ -188,60 +234,61 @@ void ProcessBuy()
 //+------------------------------------------------------------------+
 //| Sell Process                                                     |
 //+------------------------------------------------------------------+
-void ProcessSell()
+void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, int handle_entry, int handle_tp)
 {
-   if(0 == 0
-// Is Send Sell Notification
-         && isSendSell
-// If currently not trading
-         && !IsSelling() && !IsBuying()
-// If Chiukou-sen below Price
-         && IsChikouBelowPrice()
-// If Tenkan < Kijun
-         && CurrentTenkan() < CurrentKijun()
-// If Price Closed Below Cloud
-         && IsPriceClosedBelowCloud()
-// If Tick price near Cloud
-         && IsPriceNearCloud_Sell()
-// If Max Trade not Reach
-         && IsMaxTrade()) {
-
-      isSendSell = false;
-      SendNotification("Sell: " + INPUT_SYMBOL);
-      Print("Galaxy Sell!!!\r\n" + INPUT_SYMBOL);
-   }
+   string stringTF = EnumToString(timeframe);
+   string shortTimeframe = StringReplace(stringTF, "PERIOD_", "");
 
 // Get ichimoku values
-   FillArraysFromBuffers(Tenkan_sen_Buffer,
-                         Kijun_sen_Buffer,
+   FillArraysFromBuffers(Tenkan_Sen_Buffer,
+                         Kijun_Sen_Buffer,
                          Senkou_Span_A_Buffer,
                          Senkou_Span_B_Buffer,
                          Chikou_Span_Buffer,
-                         TP_Ichimoku_handle);
+                         handle_entry);
 
-   if(isSendTP && IsSelling()) {
+   if(0 == 0
+// Is Send Sell Notification
+      && isSendEntry
+// If currently not trading
+      && !IsSelling() && !IsBuying()
+// If Chiukou-sen below Price
+      && IsChikouBelowPrice(timeframe)
+// If Tenkan < Kijun
+      && CurrentTenkan() < CurrentKijun()
+// If Price Closed Below Cloud
+      && IsPriceClosedBelowCloud(timeframe)
+// If Tick price near Cloud
+      && IsPriceNearCloud_Sell()) {
+
+      isSendEntry = false;
+      SendNotification(shortTimeframe + " - Sell: " + INPUT_SYMBOL);
+   }
+
+// Get ichimoku values
+   FillArraysFromBuffers(Tenkan_Sen_Buffer,
+                         Kijun_Sen_Buffer,
+                         Senkou_Span_A_Buffer,
+                         Senkou_Span_B_Buffer,
+                         Chikou_Span_Buffer,
+                         handle_tp);
+
+   if(isSendTP && IsSelling() && IsProfit_Sell()) {
       MqlTick Latest_Price; // Structure to get the latest prices
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
-      // If profit
-      if (IsProfit_Sell()) {
+      // If Price touch Cloud
+      if(Latest_Price.ask >= CurrentSenkouB()
+         // If Cloud become Green cloud
+         || CurrentSenkouA(DEFAULT_AMOUNT - 1) > CurrentSenkouB(DEFAULT_AMOUNT - 1)
+         // If prev 3 closed price is going up
+         || IsThreeRise(timeframe)
+         // If Tenkan Cross Kijun From Above
+         || IsTenkanCrossKijunFromBelow()
+        ) {
 
-         // If Price touch Cloud
-         if(Latest_Price.ask >= CurrentSenkouB()
-               // If Cloud become Green cloud
-               || CurrentSenkouA(default_amount - 1) > CurrentSenkouB(default_amount - 1)
-               // If prev 3 closed price is going up
-               || IsThreeRise()
-               // If Tenkan Cross Kijun From Above
-               || IsTenkanCrossKijunFromBelow()
-               // If Price going up fast
-               || IsPriceGoingUpFast()
-           ) {
-
-            isSendTP = false;
-            SendNotification("Take Profit: " + INPUT_SYMBOL);
-            Print("Take Profit!!!\r\n" + INPUT_SYMBOL);
-         }
+         isSendTP = false;
+         SendNotification(shortTimeframe + " - Take Profit: " + INPUT_SYMBOL);
       }
    }
 }
