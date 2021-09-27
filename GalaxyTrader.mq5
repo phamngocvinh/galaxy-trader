@@ -14,14 +14,14 @@
 // Symbol
 const string INPUT_SYMBOL = ChartSymbol();
 // Version
-const string VERSION = "v0.3";
+const string VERSION = "v0.3.1";
 // Number of copied values
 const int AMOUNT = 30;
 // Default number of copied values
 const int DEFAULT_AMOUNT = 27;
 
 // Check timer
-const int TIMER = 60; // Default 1 minute
+const int TIMER = 1800; // Default 1 minute
 
 // Parameters
 // Entry Timeframe
@@ -142,32 +142,32 @@ void OnTimer()
    Timer_TP_2 += TIMER;
    Timer_TP_3 += TIMER;
 
-   if (Timer_Entry_1 == getTimeframeSecond(ENTRY_TIMEFRAME_1)) {
+   if (Timer_Entry_1 >= getTimeframeSecond(ENTRY_TIMEFRAME_1)) {
       isSendEntry_1 = true;
       Timer_Entry_1 = 0;
    }
 
-   if (Timer_Entry_2 == getTimeframeSecond(ENTRY_TIMEFRAME_2)) {
+   if (Timer_Entry_2 >= getTimeframeSecond(ENTRY_TIMEFRAME_2)) {
       isSendEntry_2 = true;
       Timer_Entry_2 = 0;
    }
 
-   if (Timer_Entry_3 == getTimeframeSecond(ENTRY_TIMEFRAME_3)) {
+   if (Timer_Entry_3 >= getTimeframeSecond(ENTRY_TIMEFRAME_3)) {
       isSendEntry_3 = true;
       Timer_Entry_3 = 0;
    }
 
-   if (Timer_TP_1 == getTimeframeSecond(TP_TIMEFRAME_1)) {
+   if (Timer_TP_1 >= getTimeframeSecond(TP_TIMEFRAME_1)) {
       isSendTP_1 = true;
       Timer_TP_1 = 0;
    }
 
-   if (Timer_TP_2 == getTimeframeSecond(TP_TIMEFRAME_2)) {
+   if (Timer_TP_2 >= getTimeframeSecond(TP_TIMEFRAME_2)) {
       isSendTP_2 = true;
       Timer_TP_2 = 0;
    }
 
-   if (Timer_TP_3 == getTimeframeSecond(TP_TIMEFRAME_3)) {
+   if (Timer_TP_3 >= getTimeframeSecond(TP_TIMEFRAME_3)) {
       isSendTP_3 = true;
       Timer_TP_3 = 0;
    }
