@@ -35,4 +35,28 @@ bool isValidSymbol ()
    return true;
 }
 //+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+
+//| Send Entry Notification                                          |
+//+------------------------------------------------------------------+
+void sendEntry (bool &isSendEntry, string type, string timeframe)
+{
+   isSendEntry = false;
+   string noti = INPUT_SYMBOL + " - " + type + " - " + timeframe;
+   SendNotification(noti);
+   Print(noti);
+}
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//| Send Entry Notification                                          |
+//+------------------------------------------------------------------+
+void sendTP (bool &isSendTP, string timeframe, string reason)
+{
+   isSendTP = false;
+   string noti = INPUT_SYMBOL + " - TakeProfit - " + timeframe + "\r\n" + reason;
+   SendNotification(noti);
+   Print(noti);
+}
+//+------------------------------------------------------------------+
+

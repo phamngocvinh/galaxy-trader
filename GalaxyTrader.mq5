@@ -8,20 +8,16 @@
 #include "Common_Buy.mq5"
 #include "Common_Sell.mq5"
 #include "Ichimoku.mq5"
-#include <Trade\Trade.mqh>
 
 // Constants
 // Symbol
 const string INPUT_SYMBOL = ChartSymbol();
 // Version
-const string VERSION = "v0.3.1";
+const string VERSION = "v0.4";
 // Number of copied values
 const int AMOUNT = 30;
 // Default number of copied values
 const int DEFAULT_AMOUNT = 27;
-
-// Check timer
-const int TIMER = 1800; // Default 1 minute
 
 // Parameters
 // Entry Timeframe
@@ -36,6 +32,9 @@ input ENUM_TIMEFRAMES TP_TIMEFRAME_3 = PERIOD_H1;// Take Profit TimeFrame 3
 
 // Point Gap
 input int POINT_GAP = 200; // Range between cloud and price
+
+// Check Timer
+input int TIMER = 1800; // Default 1 minute
 
 // Variables
 // Ichimoku
@@ -69,11 +68,6 @@ bool isSendEntry_3 = false;
 bool isSendTP_1 = false;
 bool isSendTP_2 = false;
 bool isSendTP_3 = false;
-
-// Is Debug Mode
-const bool isDebug = false;
-CTrade cTrade;
-CPositionInfo cPosition;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -204,13 +198,7 @@ void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, in
 // If Tick price near Cloud
       && IsPriceNearCloud()) {
 
-      isSendEntry = false;
-      SendNotification(strTimeFrame + " - Buy: " + INPUT_SYMBOL);
-
-      if (isDebug) {
-         cTrade.Buy(0.02, NULL, 0.0, 0.0, 0.0);
-         Print(strTimeFrame + " - Buy: " + INPUT_SYMBOL);
-      }
+      sendEntry(isSendEntry, "Buy", strTimeFrame);
    }
 
 // Get ichimoku values
@@ -226,23 +214,20 @@ void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, in
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
       // If Price touch Cloud
-      if(Latest_Price.ask <= CurrentSenkouA()
-         // If Cloud become Red cloud
-         || CurrentSenkouA(DEFAULT_AMOUNT - 1) < CurrentSenkouB(DEFAULT_AMOUNT - 1)
-         // If prev 3 closed price is going down
-         || IsThreeFall(timeframe)
-         // If Tenkan Cross Kijun From Above
-         || IsTenkanCrossKijunFromAbove()
-        ) {
-
-         isSendTP = false;
-         SendNotification(strTimeFrame + " - Take Profit: " + INPUT_SYMBOL);
-
-         if (isDebug) {
-            cPosition.SelectByIndex(0);
-            cTrade.PositionClose(cPosition.Ticket());
-            Print(strTimeFrame + " - Take Profit: " + INPUT_SYMBOL);
-         }
+      if (Latest_Price.ask <= CurrentSenkouA()) {
+         sendTP(isSendTP, strTimeFrame, "Price touch Cloud");
+      }
+      // If Cloud become Red cloud
+      else if (CurrentSenkouA(DEFAULT_AMOUNT - 1) < CurrentSenkouB(DEFAULT_AMOUNT - 1)) {
+         sendTP(isSendTP, strTimeFrame, "Red cloud");
+      }
+      // If previous 3 closed price is going down
+      else if (IsThreeFall(timeframe)) {
+         sendTP(isSendTP, strTimeFrame, "Three Fall");
+      }
+      // If Tenkan Cross Kijun From Above
+      else if (IsTenkanCrossKijunFromAbove()) {
+         sendTP(isSendTP, strTimeFrame, "Tenkan cross Kijun");
       }
    }
 }
@@ -279,13 +264,7 @@ void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, i
 // If Tick price near Cloud
       && IsPriceNearCloud_Sell()) {
 
-      isSendEntry = false;
-      SendNotification(strTimeFrame + " - Sell: " + INPUT_SYMBOL);
-
-      if (isDebug) {
-         cTrade.Sell(0.02, NULL, 0.0, 0.0, 0.0);
-         Print(strTimeFrame + " - Sell: " + INPUT_SYMBOL);
-      }
+      sendEntry(isSendEntry, "Sell", strTimeFrame);
    }
 
 // Get ichimoku values
@@ -301,23 +280,20 @@ void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, i
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
       // If Price touch Cloud
-      if(Latest_Price.ask >= CurrentSenkouB()
-         // If Cloud become Green cloud
-         || CurrentSenkouA(DEFAULT_AMOUNT - 1) > CurrentSenkouB(DEFAULT_AMOUNT - 1)
-         // If prev 3 closed price is going up
-         || IsThreeRise(timeframe)
-         // If Tenkan Cross Kijun From Above
-         || IsTenkanCrossKijunFromBelow()
-        ) {
-
-         isSendTP = false;
-         SendNotification(strTimeFrame + " - Take Profit: " + INPUT_SYMBOL);
-
-         if (isDebug) {
-            cPosition.SelectByIndex(0);
-            cTrade.PositionClose(cPosition.Ticket());
-            Print(strTimeFrame + " - Take Profit: " + INPUT_SYMBOL);
-         }
+      if(Latest_Price.ask >= CurrentSenkouB()) {
+         sendTP(isSendTP, strTimeFrame, "Price touch Cloud");
+      }
+      // If Cloud become Green cloud
+      else if (CurrentSenkouA(DEFAULT_AMOUNT - 1) > CurrentSenkouB(DEFAULT_AMOUNT - 1)) {
+         sendTP(isSendTP, strTimeFrame, "Green Cloud");
+      }
+      // If prev 3 closed price is going up
+      else if (IsThreeRise(timeframe)) {
+         sendTP(isSendTP, strTimeFrame, "Three Rise");
+      }
+      // If Tenkan Cross Kijun From Above
+      else if (IsTenkanCrossKijunFromBelow()) {
+         sendTP(isSendTP, strTimeFrame, "Tenkan cross Kijun");
       }
    }
 }
