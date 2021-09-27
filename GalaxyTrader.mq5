@@ -13,7 +13,7 @@
 // Symbol
 const string INPUT_SYMBOL = ChartSymbol();
 // Version
-const string VERSION = "v0.4";
+const string VERSION = "v0.4.1";
 // Number of copied values
 const int AMOUNT = 30;
 // Default number of copied values
@@ -21,9 +21,9 @@ const int DEFAULT_AMOUNT = 27;
 
 // Parameters
 // Entry Timeframe
-input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_1 = PERIOD_M30;// Entry TimeFrame 1
-input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_2 = PERIOD_H1;// Entry TimeFrame 2
-input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_3 = PERIOD_H4;// Entry TimeFrame 3
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_1 = PERIOD_M15;// Entry TimeFrame 1
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_2 = PERIOD_M30;// Entry TimeFrame 2
+input ENUM_TIMEFRAMES ENTRY_TIMEFRAME_3 = PERIOD_H1;// Entry TimeFrame 3
 
 // TP Timeframe
 input ENUM_TIMEFRAMES TP_TIMEFRAME_1 = PERIOD_M15;// Take Profit TimeFrame 1
@@ -31,7 +31,7 @@ input ENUM_TIMEFRAMES TP_TIMEFRAME_2 = PERIOD_M30;// Take Profit TimeFrame 2
 input ENUM_TIMEFRAMES TP_TIMEFRAME_3 = PERIOD_H1;// Take Profit TimeFrame 3
 
 // Point Gap
-input int POINT_GAP = 200; // Range between cloud and price
+input int POINT_GAP = 100; // Range between cloud and price
 
 // Check Timer
 input int TIMER = 1800; // Checker Interval (Second)

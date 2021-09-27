@@ -10,11 +10,13 @@ bool IsPriceNearCloud()
    SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
    if (CurrentSenkouA() > CurrentSenkouB()
-       && Latest_Price.ask < CurrentSenkouA() + (POINT_GAP * Point())) {
+       && Latest_Price.ask < CurrentSenkouA() + POINT_GAP * Point()
+       && Latest_Price.ask > CurrentSenkouA()) {
 
       return true;
    } else if (CurrentSenkouB() > CurrentSenkouA()
-              && Latest_Price.ask < CurrentSenkouB() + (POINT_GAP * Point())) {
+              && Latest_Price.ask < CurrentSenkouB() + POINT_GAP * Point()
+              && Latest_Price.ask > CurrentSenkouB()) {
 
       return true;
    }
