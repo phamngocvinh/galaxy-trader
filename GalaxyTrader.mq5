@@ -34,7 +34,7 @@ input ENUM_TIMEFRAMES TP_TIMEFRAME_3 = PERIOD_H1;// Take Profit TimeFrame 3
 input int POINT_GAP = 200; // Range between cloud and price
 
 // Check Timer
-input int TIMER = 1800; // Default 1 minute
+input int TIMER = 1800; // Checker Interval (Second)
 
 // Variables
 // Ichimoku
