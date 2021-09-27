@@ -58,9 +58,11 @@
 <!-- ABOUT THE PROJECT -->
 ## :stars: About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]](https://github.com/phamngocvinh/galaxy-trader/)
 
-****** WIP ******
+Galaxy Trader use Ichimoku in multiple timeframe setting to find Bullish or Bearish trend.
+
+User can set which Timeframe to check for Entry and TakeProfit.
 
 ### Built With
 
@@ -75,8 +77,6 @@
 1. Download the [latest version](https://github.com/phamngocvinh/galaxy-trader/releases/latest)
 2. Run with `MetaTrader 5`
 
-_For more examples, please refer to the [Documentation](https://github.com/phamngocvinh/galaxy-trader/wiki)_
-
 <!-- Build -->
 ### Build
 
@@ -90,6 +90,8 @@ To get a local copy up and running follow these simple steps.
 
 <!-- Usage -->
 ## :man_teacher: Usage
+
+
 
 <!-- ROADMAP -->
 ## :world_map: Roadmap
