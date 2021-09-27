@@ -90,8 +90,27 @@ To get a local copy up and running follow these simple steps.
 
 <!-- Usage -->
 ## :man_teacher: Usage
+### - Entry Timeframe
+Entry Timeframe will be used to check for Trend Entry
 
+Entry Timeframe can be set up to 3 difference timeframes
 
+Ex: Find Entry in M30, H1, H4 timeframe 
+
+### - TakeProfit Timeframe
+TakeProfit Timeframe will be used to check for Trend Exit (where you should take profit)
+
+TakeProfit Timeframe can be set up to 3 difference timeframes
+
+Ex: Check for exit in M15, M30, H1 timeframe
+
+### - Range between Price and Cloud
+This option is used to check if price has gone too far from the cloud (to avoid checking)
+
+Ex: Only check for entry when Pip between Price and Cloud is 100 Pips
+
+### - Checker Interval
+How many `seconds` the app should check for Entry and TakeProfit
 
 <!-- ROADMAP -->
 ## :world_map: Roadmap
