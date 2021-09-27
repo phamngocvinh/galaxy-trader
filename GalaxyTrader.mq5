@@ -35,7 +35,7 @@ input ENUM_TIMEFRAMES TP_TIMEFRAME_2 = PERIOD_M30;// Take Profit TimeFrame 2
 input ENUM_TIMEFRAMES TP_TIMEFRAME_3 = PERIOD_H1;// Take Profit TimeFrame 3
 
 // Point Gap
-input int POINT_GAP = 500; // Range between cloud and price
+input int POINT_GAP = 200; // Range between cloud and price
 
 // Variables
 // Ichimoku
@@ -80,7 +80,7 @@ CPositionInfo cPosition;
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   SendNotification("Welcome to Galaxy Trader " + VERSION + "\r\nSymbol: " + INPUT_SYMBOL);
+   SendNotification("Galaxy Trader " + VERSION + "\r\nSymbol: " + INPUT_SYMBOL);
 
 //--- create timer
    EventSetTimer(TIMER); // Second to Minute
