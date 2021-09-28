@@ -8,14 +8,17 @@ bool IsPriceNearCloud()
 {
    MqlTick Latest_Price; // Structure to get the latest prices
    SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+   
+   double gapA = CurrentSenkouA() + (POINT_GAP * Point());
+   double gapB = CurrentSenkouB() + (POINT_GAP * Point());
 
    if (CurrentSenkouA() > CurrentSenkouB()
-       && Latest_Price.ask < CurrentSenkouA() + POINT_GAP * Point()
+       && Latest_Price.ask < gapA
        && Latest_Price.ask > CurrentSenkouA()) {
 
       return true;
    } else if (CurrentSenkouB() > CurrentSenkouA()
-              && Latest_Price.ask < CurrentSenkouB() + POINT_GAP * Point()
+              && Latest_Price.ask < gapB
               && Latest_Price.ask > CurrentSenkouB()) {
 
       return true;
