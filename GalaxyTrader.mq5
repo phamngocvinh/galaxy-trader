@@ -13,7 +13,7 @@
 // Symbol
 const string INPUT_SYMBOL = ChartSymbol();
 // Version
-const string VERSION = "v0.4.2";
+const string VERSION = "v0.4.3";
 // Number of copied values
 const int AMOUNT = 30;
 // Default number of copied values
@@ -214,7 +214,8 @@ void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, in
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
       // If Price touch Cloud
-      if (Latest_Price.ask <= CurrentSenkouA()) {
+      if (Latest_Price.ask <= CurrentSenkouA()
+          && CurrentSenkouA() >= CurrentSenkouB()) {
          sendTP(isSendTP, strTimeFrame, "Price touch Cloud");
       }
       // If Cloud become Red cloud
@@ -280,7 +281,8 @@ void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, i
       SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
       // If Price touch Cloud
-      if(Latest_Price.ask >= CurrentSenkouB()) {
+      if(Latest_Price.ask >= CurrentSenkouA()
+         && CurrentSenkouB() >= CurrentSenkouA()) {
          sendTP(isSendTP, strTimeFrame, "Price touch Cloud");
       }
       // If Cloud become Green cloud
