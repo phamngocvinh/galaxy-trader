@@ -36,6 +36,9 @@ input int POINT_GAP = 100; // Range between cloud and price
 // Check Timer
 input int TIMER = 1800; // Checker Interval (Second)
 
+// Max Trade Num
+input int MAX_TRADE = 3;// Total Number of Trade
+
 // Variables
 // Ichimoku
 double Tenkan_Sen_Buffer[];
@@ -196,7 +199,9 @@ void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, in
 // If Price Closed Above Cloud
       && IsPriceClosedAboveCloud(timeframe)
 // If Tick price near Cloud
-      && IsPriceNearCloud()) {
+      && IsPriceNearCloud()
+// If Maximun Trader Num not reach
+      && PositionsTotal() <= MAX_TRADE) {
 
       sendEntry(isSendEntry, "Buy", strTimeFrame);
    }
@@ -263,7 +268,9 @@ void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, i
 // If Price Closed Below Cloud
       && IsPriceClosedBelowCloud(timeframe)
 // If Tick price near Cloud
-      && IsPriceNearCloud_Sell()) {
+      && IsPriceNearCloud_Sell()
+// If Maximun Trader Num not reach
+      && PositionsTotal() <= MAX_TRADE) {
 
       sendEntry(isSendEntry, "Sell", strTimeFrame);
    }
