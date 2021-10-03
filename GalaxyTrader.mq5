@@ -223,10 +223,6 @@ void ProcessBuy(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, in
           && CurrentSenkouA() >= CurrentSenkouB()) {
          sendTP(isSendTP, strTimeFrame, "Price touch Cloud");
       }
-      // If Cloud become Red cloud
-      else if (CurrentSenkouA(DEFAULT_AMOUNT - 1) < CurrentSenkouB(DEFAULT_AMOUNT - 1)) {
-         sendTP(isSendTP, strTimeFrame, "Red cloud");
-      }
       // If previous 3 closed price is going down
       else if (IsThreeFall(timeframe)) {
          sendTP(isSendTP, strTimeFrame, "Three Fall");
@@ -291,10 +287,6 @@ void ProcessSell(bool &isSendEntry, bool &isSendTP, ENUM_TIMEFRAMES timeframe, i
       if(Latest_Price.ask >= CurrentSenkouA()
          && CurrentSenkouB() >= CurrentSenkouA()) {
          sendTP(isSendTP, strTimeFrame, "Price touch Cloud");
-      }
-      // If Cloud become Green cloud
-      else if (CurrentSenkouA(DEFAULT_AMOUNT - 1) > CurrentSenkouB(DEFAULT_AMOUNT - 1)) {
-         sendTP(isSendTP, strTimeFrame, "Green Cloud");
       }
       // If prev 3 closed price is going up
       else if (IsThreeRise(timeframe)) {
