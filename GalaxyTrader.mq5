@@ -13,7 +13,7 @@
 // Symbol
 const string INPUT_SYMBOL = ChartSymbol();
 // Version
-const string VERSION = "v0.4.3";
+const string VERSION = "v0.4.4";
 // Number of copied values
 const int AMOUNT = 30;
 // Default number of copied values
