@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                 GalaxyTrader.mq5 |
+//|                                                Trend Catcher.mq5 |
 //|                                                    Version 0.4.4 |
 //|                                   Copyright 2021, Pham Ngoc Vinh |
 //+------------------------------------------------------------------+
@@ -77,7 +77,7 @@ bool isSendTP_3 = false;
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   SendNotification("Galaxy Trader " + VERSION + "\r\nSymbol: " + INPUT_SYMBOL);
+   SendNotification("Trend Catcher " + VERSION + "\r\nSymbol: " + INPUT_SYMBOL);
 
 //--- create timer
    EventSetTimer(TIMER); // Second to Minute
