@@ -58,8 +58,6 @@
 <!-- ABOUT THE PROJECT -->
 ## :stars: About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://github.com/phamngocvinh/galaxy-trader/)
-
 Galaxy Trader use Ichimoku in multiple timeframe setting to find Bullish or Bearish trend.
 
 User can set which Timeframe to check for Entry and TakeProfit.
@@ -161,4 +159,3 @@ Project Link: [https://github.com/phamngocvinh/galaxy-trader](https://github.com
 [linkedin-url]: https://www.linkedin.com/in/phamngocvinh932
 [mail-shield]: https://img.shields.io/badge/Gmail-white?style=for-the-badge&logo=gmail
 [mail-url]: mailto:phamngocvinh@live.com
-[product-screenshot]: images/screenshot.jpg
