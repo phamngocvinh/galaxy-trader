@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2021, Pham Ngoc Vinh"
 #property link      "https://github.com/phamngocvinh/galaxy-trader"
-#define VERSION "1.0"
+#define VERSION "1.1"
 #property version VERSION
 
 //--- Input Parameters
@@ -82,6 +82,8 @@ void OnTick()
             double open = iOpen(NULL, PERIOD_D1, i);
             // Get Close Price
             double close = iClose(NULL, PERIOD_D1, i);
+            // Get Previous Close Price
+            double prevClose = iClose(NULL, PERIOD_D1, i + 1);
             // Get Bar Time
             datetime date = iTime(NULL, PERIOD_D1, i);
             MqlDateTime dt;
@@ -90,6 +92,7 @@ void OnTick()
             double highChange = (high - open) / open * 100;
             double lowChange = (low - open) / open * 100;
             double closeChange = (close - open) / open * 100;
+            double prevCloseChange = (close - prevClose) / close * 100;
 
             StringAdd(content, getDayOfWeek(dt.day_of_week));
             StringAdd(content, " - ");
@@ -116,6 +119,12 @@ void OnTick()
             StringAdd(content, DoubleToString(close, 2));
             StringAdd(content, "  ");
             StringAdd(content, DoubleToString(closeChange, 2));
+            StringAdd(content, "%\r\n");
+
+            StringAdd(content, "To Last: ");
+            StringAdd(content, DoubleToString(prevClose, 2));
+            StringAdd(content, "  ");
+            StringAdd(content, DoubleToString(prevCloseChange, 2));
             StringAdd(content, "%\r\n");
 
             StringAdd(content, "\r\n");
