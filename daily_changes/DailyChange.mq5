@@ -121,7 +121,7 @@ void OnTick()
             StringAdd(content, DoubleToString(closeChange, 2));
             StringAdd(content, "%\r\n");
 
-            StringAdd(content, "To Last: ");
+            StringAdd(content, "Prev: ");
             StringAdd(content, DoubleToString(prevClose, 2));
             StringAdd(content, "  ");
             StringAdd(content, DoubleToString(prevCloseChange, 2));
