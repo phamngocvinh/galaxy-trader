@@ -20,6 +20,19 @@ CTrade cTrade;
 //+------------------------------------------------------------------+
 int OnInit()
 {
+// Welcome
+    string content = "";
+    StringAdd(content, "Trailing Star v" + VERSION);
+    StringAdd(content, "\r\n");
+    StringAdd(content, "Entry point: ");
+    StringAdd(content, entry_point);
+    StringAdd(content, " points");
+    StringAdd(content, "\r\n");
+    StringAdd(content, "Trailing point: ");
+    StringAdd(content, trailing_point);
+    StringAdd(content, " points");
+    SendNotification(content);
+
     return(INIT_SUCCEEDED);
 }
 //+------------------------------------------------------------------+
