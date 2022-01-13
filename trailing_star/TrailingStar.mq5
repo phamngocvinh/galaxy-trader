@@ -5,7 +5,8 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2021, Pham Ngoc Vinh"
 #property link      "https://github.com/phamngocvinh/galaxy-trader"
-#property version   "1.0"
+#define VERSION "1.0"
+#property version VERSION
 
 #include <Trade\Trade.mqh>
 
