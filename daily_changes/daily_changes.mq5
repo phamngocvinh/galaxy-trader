@@ -13,24 +13,6 @@ input int      numOfDays = 3; // Number of past days changes
 input int      hour = 7; // Notification Hour
 input int      minute = 0; // Notification Minute
 
-//--- Constants
-// Chart Symbol
-const string INPUT_SYMBOL = ChartSymbol();
-// Number of copied values
-const int AMOUNT = 30;
-// Default number of copied values
-const int DEFAULT_AMOUNT = 27;
-
-// Variables
-// Ichimoku
-double Tenkan_Sen_Buffer[];
-double Kijun_Sen_Buffer[];
-double Senkou_Span_A_Buffer[];
-double Senkou_Span_B_Buffer[];
-double Chikou_Span_Buffer[];
-// Ichimoku Handles
-int Ichimoku_Handle;
-
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
