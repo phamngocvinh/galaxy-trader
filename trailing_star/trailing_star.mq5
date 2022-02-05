@@ -10,10 +10,11 @@
 
 #include <Trade\Trade.mqh>
 
-//--- input parameters
+// Input parameters
 input int      entry_point;
 input int      trailing_point;
 
+// CTrade class
 CTrade cTrade;
 
 //+------------------------------------------------------------------+
@@ -35,12 +36,6 @@ int OnInit()
     SendNotification(content);
 
     return(INIT_SUCCEEDED);
-}
-//+------------------------------------------------------------------+
-//| Expert deinitialization function                                 |
-//+------------------------------------------------------------------+
-void OnDeinit(const int reason)
-{
 }
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
@@ -95,3 +90,4 @@ void OnTick()
         }
     }
 }
+//+------------------------------------------------------------------+
