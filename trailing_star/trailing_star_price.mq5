@@ -52,13 +52,10 @@ void OnTick()
         PositionGetSymbol(idx);
 
         double point = Point();
-        double entry_price = PositionGetDouble(POSITION_PRICE_OPEN);
 
         // If it's a BUY position
         if (PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY) {
-            double profit_price = latest_price.bid - entry_price;
-
-            if (profit_price > entry_price) {
+            if (latest_price.bid > entry_price) {
                 if (PositionGetDouble(POSITION_SL) != 0.0) {
                     // If Bid price higher than Trailing Point
                     if (latest_price.bid > PositionGetDouble(POSITION_SL) + (trailing_point * point)) {
@@ -73,9 +70,7 @@ void OnTick()
         }
         // If it's a SELL position
         else {
-            double profit_price = entry_price - latest_price.ask;
-
-            if (profit_price > entry_price) {
+            if (latest_price.ask < entry_price) {
                 if (PositionGetDouble(POSITION_SL) != 0.0) {
                     // If Ask price lower than Trailing Point
                     if (latest_price.ask < PositionGetDouble(POSITION_SL) - (trailing_point * point)) {
