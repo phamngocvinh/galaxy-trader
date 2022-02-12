@@ -28,7 +28,6 @@ int OnInit()
     StringAdd(content, "\r\n");
     StringAdd(content, "Entry price: ");
     StringAdd(content, entry_price);
-    StringAdd(content, " points");
     StringAdd(content, "\r\n");
     StringAdd(content, "Trailing point: ");
     StringAdd(content, trailing_point);
