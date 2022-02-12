@@ -4,15 +4,15 @@
 //|                    https://github.com/phamngocvinh/galaxy-trader |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2021, Pham Ngoc Vinh"
-#property link      "https://github.com/phamngocvinh/galaxy-trader"
+#property link "https://github.com/phamngocvinh/galaxy-trader"
 #define VERSION "1.0"
 #property version VERSION
 
 #include <Trade\Trade.mqh>
 
 // Input parameters
-input int      entry_point;
-input int      trailing_point;
+input double entry_price; // Entry Price
+input int trailing_point; // Trailing Point
 
 // CTrade class
 CTrade cTrade;
@@ -26,8 +26,8 @@ int OnInit()
     string content = "";
     StringAdd(content, "Trailing Star v" + VERSION);
     StringAdd(content, "\r\n");
-    StringAdd(content, "Entry point: ");
-    StringAdd(content, entry_point);
+    StringAdd(content, "Entry price: ");
+    StringAdd(content, entry_price);
     StringAdd(content, " points");
     StringAdd(content, "\r\n");
     StringAdd(content, "Trailing point: ");
@@ -58,7 +58,7 @@ void OnTick()
         if (PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY) {
             double profit_price = latest_price.bid - entry_price;
 
-            if (profit_price > entry_point * point) {
+            if (profit_price > entry_price) {
                 if (PositionGetDouble(POSITION_SL) != 0.0) {
                     // If Bid price higher than Trailing Point
                     if (latest_price.bid > PositionGetDouble(POSITION_SL) + (trailing_point * point)) {
@@ -75,7 +75,7 @@ void OnTick()
         else {
             double profit_price = entry_price - latest_price.ask;
 
-            if (profit_price > entry_point * point) {
+            if (profit_price > entry_price) {
                 if (PositionGetDouble(POSITION_SL) != 0.0) {
                     // If Ask price lower than Trailing Point
                     if (latest_price.ask < PositionGetDouble(POSITION_SL) - (trailing_point * point)) {
