@@ -1,0 +1,50 @@
+<project name="Galaxy Trader Distribution" default="distribute" basedir=".">
+	<description>
+		Build all Galaxy Trader Tools
+	</description>
+
+	<property name="dist.dir" location="distribute" />
+	<property name="build.dir" location="${dist.dir}/build" />
+
+	<target name="init">
+		<echo message="Galaxy Trader Distribution" />
+		<delete dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<target name="get-source">
+		<copy todir="${build.dir}">
+			<fileset dir="${basedir}" includes="**/*.mq5" />
+		</copy>
+	</target>
+
+	<target name="remove-archived">
+		<delete dir="${build.dir}/archive" />
+	</target>
+
+	<target name="compile">
+		<exec dir="${basedir}" executable="build.bat">
+			<arg value="${build.dir}" />
+		</exec>
+		<echo message="Built successfully" />
+	</target>
+
+	<target name="remove-common">
+		<delete dir="${build.dir}/common" />
+	</target>
+
+	<target name="delete-source">
+		<delete>
+			<fileset dir="${build.dir}" includes="**/*.mq5" />
+		</delete>
+	</target>
+
+	<target name="zip">
+		<zip destfile="${dist.dir}/galaxy-trader-v1.0.zip" basedir="${build.dir}" />
+		<delete dir="${build.dir}" />
+	</target>
+
+	<!-- Default, Run to build App -->
+	<target name="distribute" depends="init, get-source, remove-archived, compile, remove-common, delete-source, zip" />
+
+</project>
