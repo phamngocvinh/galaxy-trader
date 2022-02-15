@@ -17,6 +17,12 @@ input ENUM_TIMEFRAMES input_timeframe3 = PERIOD_H1; // Timeframe 3
 // Fluctuation Points
 input int input_fluc_point = 1000; // Fluctuation Points
 
+// Check Timer
+input int TIMER = 1800; // Checker Interval (Second)
+
+// Variables
+bool isSendNotification = true;
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -33,6 +39,9 @@ int OnInit()
     StringAdd(content, ", ");
     StringAdd(content, EnumToString(input_timeframe3));
     SendNotification(content);
+
+// Create timer
+    EventSetTimer(TIMER); // Second to Minute
 
     return(INIT_SUCCEEDED);
 }
@@ -51,26 +60,29 @@ void OnTick()
 //+------------------------------------------------------------------+
 void CheckForHighTide(ENUM_TIMEFRAMES timeframe)
 {
-    double openPrice = iOpen(NULL, timeframe, 0);
-    double highPrice = iHigh(NULL, timeframe, 0);
-    double lowPrice = iLow(NULL, timeframe, 0);
-    double fluctuation = 0;
-    // Convert Point to Price
-    double input_fluc_price = input_fluc_point * Point();
+    if (isSendNotification) {
+        MqlTick Latest_Price; // Structure to get the latest prices
+        SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
+        
+        double openPrice = iOpen(NULL, timeframe, 0);
+        double fluctuation = 0;
+        // Convert Point to Price
+        double input_fluc_price = input_fluc_point * Point();
 
+        if (Latest_Price.ask > openPrice) {
+            // If Bull Bar
+            fluctuation = Latest_Price.ask - openPrice;
 
-    if (highPrice > openPrice) {
-        // If Bull Bar
-        fluctuation = highPrice - openPrice;
+        } else if (openPrice > Latest_Price.bid) {
+            // If Bear Bar
+            fluctuation = openPrice - Latest_Price.bid;
+        }
 
-    } else if (openPrice > lowPrice) {
-        // If Bear Bar
-        fluctuation = openPrice - lowPrice;
-    }
-
-    // If Fluctuation price higher than expected
-    if (fluctuation >= input_fluc_price) {
-        SendNoti(timeframe);
+        // If Fluctuation price higher than expected
+        if (fluctuation >= input_fluc_price) {
+            SendNoti(timeframe);
+            isSendNotification = false;
+        }
     }
 }
 //+------------------------------------------------------------------+
@@ -83,5 +95,12 @@ void SendNoti(ENUM_TIMEFRAMES timeframe)
     StringAdd(content, " Timeframe");
     printf(content);
     SendNotification(content);
+}
+//+------------------------------------------------------------------+
+//| Timer function                                                   |
+//+------------------------------------------------------------------+
+void OnTimer()
+{
+    isSendNotification = true;
 }
 //+------------------------------------------------------------------+

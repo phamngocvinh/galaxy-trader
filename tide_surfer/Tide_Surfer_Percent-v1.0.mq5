@@ -17,6 +17,12 @@ input ENUM_TIMEFRAMES input_timeframe3 = PERIOD_H1; // Timeframe 3
 // Fluctuation Points
 input double input_fluc_percent = 0.5; // Fluctuation Percent
 
+// Check Timer
+input int TIMER = 1800; // Checker Interval (Second)
+
+// Variables
+bool isSendNotification = true;
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -33,6 +39,9 @@ int OnInit()
     StringAdd(content, ", ");
     StringAdd(content, EnumToString(input_timeframe3));
     SendNotification(content);
+
+// Create timer
+    EventSetTimer(TIMER); // Second to Minute
 
     return(INIT_SUCCEEDED);
 }
@@ -51,23 +60,27 @@ void OnTick()
 //+------------------------------------------------------------------+
 void CheckForHighTide(ENUM_TIMEFRAMES timeframe)
 {
-    double openPrice = iOpen(NULL, timeframe, 0);
-    double highPrice = iHigh(NULL, timeframe, 0);
-    double lowPrice = iLow(NULL, timeframe, 0);
-    double fluctuation = 0;
+    if (isSendNotification) {
+        MqlTick Latest_Price; // Structure to get the latest prices
+        SymbolInfoTick(Symbol(), Latest_Price); // Assign current prices to structure
 
-    if (highPrice > openPrice) {
-        // If Bull Bar
-        fluctuation = (highPrice - openPrice) / openPrice * 100;
+        double openPrice = iOpen(NULL, timeframe, 0);
+        double fluctuation = 0;
 
-    } else if (openPrice > lowPrice) {
-        // If Bear Bar
-        fluctuation = (openPrice - lowPrice) / lowPrice * 100;
-    }
+        if (Latest_Price.ask > openPrice) {
+            // If Bull Bar
+            fluctuation = (Latest_Price.ask - openPrice) / openPrice * 100;
 
-    // If Fluctuation price higher than expected
-    if (fluctuation >= input_fluc_percent) {
-        SendNoti(timeframe);
+        } else if (openPrice > Latest_Price.bid) {
+            // If Bear Bar
+            fluctuation = (openPrice - Latest_Price.bid) / Latest_Price.bid * 100;
+        }
+
+        // If Fluctuation price higher than expected
+        if (fluctuation >= input_fluc_percent) {
+            SendNoti(timeframe);
+            isSendNotification = false;
+        }
     }
 }
 //+------------------------------------------------------------------+
@@ -80,5 +93,12 @@ void SendNoti(ENUM_TIMEFRAMES timeframe)
     StringAdd(content, " Timeframe");
     printf(content);
     SendNotification(content);
+}
+//+------------------------------------------------------------------+
+//| Timer function                                                   |
+//+------------------------------------------------------------------+
+void OnTimer()
+{
+    isSendNotification = true;
 }
 //+------------------------------------------------------------------+
