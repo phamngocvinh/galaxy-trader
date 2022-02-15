@@ -4,7 +4,7 @@
 	</description>
 
 	<property name="dist.dir" location="distribute" />
-	<property name="build.dir" location="${dist.dir}/build" />
+	<property name="build.dir" location="${dist.dir}/Galaxy-Trader-v1.0" />
 
 	<target name="init">
 		<echo message="Galaxy Trader Distribution" />
@@ -37,7 +37,7 @@
 	</target>
 
 	<target name="zip">
-		<zip destfile="${dist.dir}/galaxy-trader-v1.0.zip" basedir="${build.dir}" />
+		<zip destfile="${dist.dir}/galaxy-trader-v1.0.zip" basedir="${dist.dir}" />
 		<delete dir="${build.dir}" />
 	</target>
 
