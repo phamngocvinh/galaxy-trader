@@ -27,7 +27,7 @@ int OnInit()
     StringAdd(content, "Trailing Star v" + VERSION);
     StringAdd(content, "\r\n");
     StringAdd(content, "Entry point: ");
-    StringAdd(content, DoubleToString(entry_point));
+    StringAdd(content, IntegerToString(entry_point));
     StringAdd(content, " points");
     StringAdd(content, "\r\n");
     StringAdd(content, "Trailing point: ");
