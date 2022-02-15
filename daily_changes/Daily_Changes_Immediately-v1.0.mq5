@@ -1,11 +1,11 @@
 //+------------------------------------------------------------------+
-//|                                          DailyChangeSchedule.mq5 |
-//|                                   Copyright 2021, Pham Ngoc Vinh |
+//|                                                 Daily Change Now |
+//|                                   Copyright 2022, Pham Ngoc Vinh |
 //|                    https://github.com/phamngocvinh/galaxy-trader |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2021, Pham Ngoc Vinh"
+#property copyright "Copyright 2022, Pham Ngoc Vinh"
 #property link      "https://github.com/phamngocvinh/galaxy-trader"
-#define VERSION "1.1"
+#define VERSION "1.0"
 #property version VERSION
 
 //--- Input Parameters
@@ -19,19 +19,14 @@ input int      minute = 0; // Notification Minute
 int OnInit()
 {
 //---
+    // Get current time
+    MqlDateTime currectTime;
+    TimeCurrent(currectTime);
+
 // Welcome
     string content = "";
     StringAdd(content, "Daily Change v" + VERSION);
     StringAdd(content, "\r\n");
-    StringAdd(content, "Report daily at ");
-    StringAdd(content, IntegerToString(hour));
-    StringAdd(content, ":");
-    StringAdd(content, IntegerToString(minute, 2, '0'));
-    SendNotification(content);
-
-    // Get current time
-    MqlDateTime currectTime;
-    TimeCurrent(currectTime);
 
     for(int i = 1; i <= numOfDays; i++) {
         // Get High Price
