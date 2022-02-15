@@ -1,9 +1,9 @@
 //+------------------------------------------------------------------+
-//|                                                 TrailingStar.mq5 |
-//|                                   Copyright 2021, Pham Ngoc Vinh |
+//|                                           Trailing Star on Price |
+//|                                   Copyright 2022, Pham Ngoc Vinh |
 //|                    https://github.com/phamngocvinh/galaxy-trader |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2021, Pham Ngoc Vinh"
+#property copyright "Copyright 2022, Pham Ngoc Vinh"
 #property link "https://github.com/phamngocvinh/galaxy-trader"
 #define VERSION "1.0"
 #property version VERSION
@@ -11,7 +11,7 @@
 #include <Trade\Trade.mqh>
 
 // Input parameters
-input int entry_point; // Entry Point
+input double entry_price; // Entry Price
 input int trailing_point; // Trailing Point
 
 // CTrade class
@@ -26,9 +26,8 @@ int OnInit()
     string content = "";
     StringAdd(content, "Trailing Star v" + VERSION);
     StringAdd(content, "\r\n");
-    StringAdd(content, "Entry point: ");
-    StringAdd(content, entry_point);
-    StringAdd(content, " points");
+    StringAdd(content, "Entry price: ");
+    StringAdd(content, entry_price);
     StringAdd(content, "\r\n");
     StringAdd(content, "Trailing point: ");
     StringAdd(content, trailing_point);
@@ -52,13 +51,10 @@ void OnTick()
         PositionGetSymbol(idx);
 
         double point = Point();
-        double entry_price = PositionGetDouble(POSITION_PRICE_OPEN);
 
         // If it's a BUY position
         if (PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY) {
-            double profit_price = latest_price.bid - entry_price;
-
-            if (profit_price > entry_point * point) {
+            if (latest_price.bid > entry_price) {
                 if (PositionGetDouble(POSITION_SL) != 0.0) {
                     // If Bid price higher than Trailing Point
                     if (latest_price.bid > PositionGetDouble(POSITION_SL) + (trailing_point * point)) {
@@ -73,9 +69,7 @@ void OnTick()
         }
         // If it's a SELL position
         else {
-            double profit_price = entry_price - latest_price.ask;
-
-            if (profit_price > entry_point * point) {
+            if (latest_price.ask < entry_price) {
                 if (PositionGetDouble(POSITION_SL) != 0.0) {
                     // If Ask price lower than Trailing Point
                     if (latest_price.ask < PositionGetDouble(POSITION_SL) - (trailing_point * point)) {
