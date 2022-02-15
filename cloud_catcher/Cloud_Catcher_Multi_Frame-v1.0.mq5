@@ -1,15 +1,15 @@
 //+------------------------------------------------------------------+
-//|                                                 CloudCatcher.mq5 |
-//|                                   Copyright 2021, Pham Ngoc Vinh |
+//|                                        Cloud Catcher Multi Frame |
+//|                                   Copyright 2022, Pham Ngoc Vinh |
 //|                    https://github.com/phamngocvinh/galaxy-trader |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2021, Pham Ngoc Vinh"
+#property copyright "Copyright 2022, Pham Ngoc Vinh"
 #property link      "https://github.com/phamngocvinh/galaxy-trader"
 #define VERSION "1.0"
 #property version VERSION
 
 // Include
-#include "ichimoku.mq5"
+#include "../common/Ichimoku.mq5"
 
 //--- Constants
 // Number of copied values
