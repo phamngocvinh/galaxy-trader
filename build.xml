@@ -29,11 +29,8 @@
 		<echo message="Built successfully" />
 	</target>
 
-	<target name="remove-common">
-		<delete dir="${build.dir}/common" />
-	</target>
-
 	<target name="delete-source">
+		<delete dir="${build.dir}/common" />
 		<delete>
 			<fileset dir="${build.dir}" includes="**/*.mq5" />
 		</delete>
@@ -45,6 +42,6 @@
 	</target>
 
 	<!-- Default, Run to build App -->
-	<target name="distribute" depends="init, get-source, remove-archived, compile, remove-common, delete-source, zip" />
+	<target name="distribute" depends="init, get-source, remove-archived, compile, delete-source, zip" />
 
 </project>
