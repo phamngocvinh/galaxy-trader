@@ -1,13 +1,13 @@
 //+------------------------------------------------------------------+
 //|                                                Trend Catcher.mq5 |
 //|                                                    Version 0.4.4 |
-//|                                   Copyright 2021, Pham Ngoc Vinh |
+//|                                   Copyright 2022, Pham Ngoc Vinh |
 //+------------------------------------------------------------------+
 // Include
 #include "Common.mq5"
 #include "Common_Buy.mq5"
 #include "Common_Sell.mq5"
-#include "Ichimoku.mq5"
+#include "../common/Ichimoku.mq5"
 
 // Constants
 // Symbol
