@@ -147,13 +147,13 @@ Project Link: [https://github.com/phamngocvinh/galaxy-trader](https://github.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[download-shield]: https://img.shields.io/github/downloads/phamngocvinh/galaxy-trader/total?color=green&style=for-the-badge
+[download-shield]: https://img.shields.io/github/downloads/phamngocvinh/galaxy-trader/total?style=for-the-badge&labelColor=4c566a&color=5e81ac&logo=github&logoColor=white
 [download-url]: https://github.com/phamngocvinh/galaxy-trader/releases/latest
-[release-shield]: https://img.shields.io/github/v/release/phamngocvinh/galaxy-trader?style=for-the-badge
+[release-shield]: https://img.shields.io/github/v/release/phamngocvinh/galaxy-trader?style=for-the-badge&labelColor=4c566a&color=5e81ac&logo=Battle.net&logoColor=white
 [release-url]: https://github.com/phamngocvinh/galaxy-trader/releases/latest
-[issues-shield]: https://img.shields.io/github/issues/phamngocvinh/galaxy-trader?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/phamngocvinh/galaxy-trader?style=for-the-badge&labelColor=4c566a&color=5e81ac&logo=Todoist&logoColor=white
 [issues-url]: https://github.com/phamngocvinh/galaxy-trader/issues
-[license-shield]: https://img.shields.io/github/license/phamngocvinh/galaxy-trader?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/phamngocvinh/galaxy-trader?style=for-the-badge&labelColor=4c566a&color=5e81ac&logo=AdGuard&logoColor=white
 [license-url]: https://github.com/phamngocvinh/galaxy-trader/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/linkedin-blue?style=for-the-badge&logo=linkedin
 [linkedin-url]: https://www.linkedin.com/in/phamngocvinh932
